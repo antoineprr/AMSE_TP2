@@ -1,22 +1,41 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-class ImagePage extends StatefulWidget {
-  const ImagePage({super.key});
+class ImagePageAnimate extends StatefulWidget {
+  const ImagePageAnimate({super.key});
 
   @override
-  State<ImagePage> createState() => _ImagePageState();
+  State<ImagePageAnimate> createState() => _ImagePageStateAnimate();
 }
 
-class _ImagePageState extends State<ImagePage> {
+class _ImagePageStateAnimate extends State<ImagePageAnimate> {
   double _rotation = 0;
   double _scale = 1.0;
   bool _mirror = false;
+  bool _animation = false;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    const d = Duration(milliseconds: 50);
+    _timer = Timer.periodic(d, animate);
+  }
+
+  void animate(Timer t) {
+    if (!mounted) return;
+    setState(() {
+      if (_animation) {
+        _rotation += 0.1;
+        _scale += 0.01;
+        if (_scale > 2) {
+          _scale = 0.1;
+        }
+        if (_rotation > 2 * 3.14) {
+          _rotation = 0;
+        }
+      }
+    });
   }
 
   @override
@@ -80,6 +99,24 @@ class _ImagePageState extends State<ImagePage> {
                         _mirror = value;
                       });
                     },
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Start/Stop'),
+                  OverflowBar(
+                    children: [
+                      IconButton(
+                        icon: Icon(_animation ? Icons.pause : Icons.play_arrow),
+                        onPressed: () {
+                          setState(() {
+                            _animation = !_animation;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

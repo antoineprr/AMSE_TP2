@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test_exos/tuile_page.dart';  // Add this import
+import 'package:flutter_application_test_exos/tuile_page.dart';
 
-class Exercice5b extends StatefulWidget {
-  const Exercice5b({super.key});
+class Exercice5a extends StatefulWidget {
+  const Exercice5a({super.key});
 
   @override
-  State<Exercice5b> createState() => _Exercice5bState();
+  State<Exercice5a> createState() => _Exercice5aState();
 }
 
-class _Exercice5bState extends State<Exercice5b> {
+class _Exercice5aState extends State<Exercice5a> {
   final String imageUrl = 'https://picsum.photos/512/512';
   double _sliderValue = 3;
 
@@ -19,7 +19,7 @@ class _Exercice5bState extends State<Exercice5b> {
     int crossAxisCount = _sliderValue.round();
     double maxGridHeight = screenHeight * 0.7;
     double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
-    double tileSize = gridSize / crossAxisCount;
+    //double tileSize = gridSize / crossAxisCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -61,25 +61,6 @@ class _Exercice5bState extends State<Exercice5b> {
                     child: tile.croppedImageTile(),
                   );
                 },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
-                  Slider(
-                    value: _sliderValue,
-                    min: 2,
-                    max: 6,
-                    divisions: 4,
-                    onChanged: (value) {
-                      setState(() {
-                        _sliderValue = value;
-                      });
-                    },
-                  ),
-                ],
               ),
             ),
           ],
