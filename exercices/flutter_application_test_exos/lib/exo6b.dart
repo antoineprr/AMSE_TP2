@@ -50,20 +50,25 @@ class _PlateauPageState extends State<PlateauPage> {
             SizedBox(
               width: gridSize,
               height: gridSize,
-              child: GridView.count(
+                child: GridView.count(
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 2.0,
                 mainAxisSpacing: 2.0,
                 children: [
                   for (var row in tileMatrix)
-                    for (var tile in row)
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1),
-                        ),
-                        child: tile.croppedImageTile(),
-                      )
+                  for (var tile in row)
+                    InkWell(
+                    onTap: () {
+                      print('Tile tapped at position: (${tile.alignment.x}, ${tile.alignment.y})');
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1),
+                      ),
+                      child: tile.croppedImageTile(),
+                    ),
+                  ),
                 ],
               ),
             ),
