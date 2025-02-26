@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test_exos/tuile_page.dart';
 
@@ -13,9 +15,17 @@ class _PlateauPageState extends State<PlateauPage> {
   double _sliderValue = 3;
   late List<List<Tile>> tileMatrix;
 
+  @override
+  void initState() {
+    super.initState();
+    tileMatrix = createTileMatrix(_sliderValue.round());
+  }
+
   List<List<Tile>> createTileMatrix(int size) {
-    return List.generate(size, (row) {
+    var matrix = List.generate(size, (row) {
       return List.generate(size, (col) {
+        int tileNumber = row * size + col + 1; 
+        bool isLastTile = (row == size - 1 && col == size - 1);
         return Tile(
           imageURL: imageUrl,
           alignment: Alignment(
@@ -23,9 +33,23 @@ class _PlateauPageState extends State<PlateauPage> {
             -1 + (row * 2 / (size - 1)),
           ),
           gridSize: size,
+          isEmpty: isLastTile,
+          number: tileNumber,
         );
       });
     });
+    
+    var rng = Random();
+    for (var i = size - 1; i > 0; i--) {
+      for (var j = size - 1; j > 0; j--) {
+        var m = rng.nextInt(i + 1);
+        var n = rng.nextInt(j + 1);
+        var temp = matrix[i][j];
+        matrix[i][j] = matrix[m][n];
+        matrix[m][n] = temp;
+      }
+    }
+    return matrix;
   }
 
   @override
@@ -36,7 +60,9 @@ class _PlateauPageState extends State<PlateauPage> {
     double maxGridHeight = screenHeight * 0.7;
     double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
 
-    tileMatrix = createTileMatrix(crossAxisCount);
+    if (tileMatrix.length != crossAxisCount) {
+      tileMatrix = createTileMatrix(crossAxisCount);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -51,31 +77,37 @@ class _PlateauPageState extends State<PlateauPage> {
               width: gridSize,
               height: gridSize,
                 child: GridView.count(
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 2.0,
-                mainAxisSpacing: 2.0,
-                children: [
-                  for (var row in tileMatrix)
-                  for (var tile in row)
-                    InkWell(
-                    onTap: () {
-                      print('Tile tapped at position: (${tile.alignment.x}, ${tile.alignment.y})');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1),
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 2.0,
+                  mainAxisSpacing: 2.0,
+                  children: [
+                    for (var i = 0; i < tileMatrix.length; i++)
+                      for (var j = 0; j < tileMatrix[i].length; j++)
+                        Container(
+                            decoration: BoxDecoration(
+                            border: Border.all(
+                              color: tileMatrix[i][j].isEmpty ? Colors.white : Colors.black,
+                              width: tileMatrix[i][j].isEmpty ? 0 : 1
+                            ),
+                            ),
+                            child: InkWell(
+                            onTap: () {
+                              var emptyPosition = findEmptyTile();
+                              if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
+                                swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
+                              }
+                            },
+                            child: tileMatrix[i][j].croppedImageTile(),
+                            )
+                          ),
+                        ],
                       ),
-                      child: tile.croppedImageTile(),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                      children: [
                   Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
                   Slider(
                     value: _sliderValue,
@@ -95,5 +127,29 @@ class _PlateauPageState extends State<PlateauPage> {
         ),
       ),
     );
+  }
+
+  void swapTiles(int row1, int col1, int row2, int col2) {
+    setState(() {
+      var temp = tileMatrix[row1][col1];
+      tileMatrix[row1][col1] = tileMatrix[row2][col2];
+      tileMatrix[row2][col2] = temp;
+    });
+  }
+
+  (int, int) findEmptyTile() {
+    for (int r = 0; r < tileMatrix.length; r++) {
+      for (int c = 0; c < tileMatrix[r].length; c++) {
+        if (tileMatrix[r][c].isEmpty) {
+          return (r, c);
+        }
+      }
+    }
+    return (-1, -1);
+  }
+
+  bool isAdjacentToEmpty(int row, int col, int emptyRow, int emptyCol) {
+    return (row == emptyRow && (col == emptyCol + 1 || col == emptyCol - 1)) || 
+           (col == emptyCol && (row == emptyRow + 1 || row == emptyRow - 1));
   }
 }

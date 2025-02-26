@@ -3,34 +3,66 @@ import 'package:flutter/material.dart';
 class Tile {
   String imageURL;
   Alignment alignment;
-  int gridSize;  
+  int gridSize;
+  bool isEmpty;
+  int number; 
 
   Tile({
     required this.imageURL, 
     required this.alignment,
     required this.gridSize,
+    this.isEmpty = false,
+    required this.number, 
   });
 
   Widget croppedImageTile() {
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: ClipRect(
-        child: Align(
-          alignment: alignment,
-          widthFactor: 1/gridSize,   
-          heightFactor: 1/gridSize, 
-          child: Image.network(
-            imageURL,
-            fit: BoxFit.cover,
+    if (isEmpty) {
+      return Container(
+        color: Colors.white,
+      );
+    }
+    return Stack(
+      children: [
+        FittedBox(
+          fit: BoxFit.fill,
+          child: ClipRect(
+            child: Align(
+              alignment: alignment,
+              widthFactor: 1/gridSize,   
+              heightFactor: 1/gridSize, 
+              child: Image.network(
+                imageURL,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
-      ),
+        Center(
+            child: Container(
+            child: Text(
+              '${number}',
+              style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              shadows: [
+                Shadow(
+                blurRadius: 3.0,
+                color: Colors.black,
+                offset: Offset(1.0, 1.0),
+                ),
+              ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
 Tile tile = new Tile(
-    imageURL: 'https://picsum.photos/512', alignment: Alignment(0, 0), gridSize: 3);
+    imageURL: 'https://picsum.photos/512', alignment: Alignment(0, 0), gridSize: 3, number: 1);
 
 class DisplayTileWidget extends StatelessWidget {
   const DisplayTileWidget({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test_exos/plateau_page.dart';
+import 'package:flutter_application_test_exos/exo6b.dart';
 
 void main() => runApp(const MyApp());
 

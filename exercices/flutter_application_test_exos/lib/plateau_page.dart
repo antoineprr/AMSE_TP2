@@ -22,7 +22,7 @@ class _PlateauPageState extends State<PlateauPage> {
             -1 + (col * 2 / (size - 1)),
             -1 + (row * 2 / (size - 1)),
           ),
-          gridSize: size,
+          gridSize: size, number: 0,
         );
       });
     });
