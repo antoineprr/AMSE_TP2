@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test_exos/Exercice5a.dart';
 import 'package:flutter_application_test_exos/image_page.dart';
+import 'package:flutter_application_test_exos/image_page_animate.dart';
+import 'package:flutter_application_test_exos/plateau_page.dart';
+import 'package:flutter_application_test_exos/tuile_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -43,32 +47,108 @@ class _MenuPageState extends State<MenuPage> {
               ),
             ),
           ),
-          const Card(
-            child: ListTile(
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 2b'),
+                      ),
+                      body: const ImagePageAnimate(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
               title: Text('Exercice 2b'),
-              subtitle: Text('Animates Rotate&Scale Image'),
+              subtitle: Text('Rotate&Scale&Animate Image'),
               trailing: Icon(Icons.play_arrow),
+              ),
             ),
           ),
-          const Card(
-            child: ListTile(
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 4a'),
+                      ),
+                      body: const DisplayTileWidget(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
               title: Text('Exercice 4a'),
-              subtitle: Text('Display a tile'),
+              subtitle: Text('Display Cropped Image'),
               trailing: Icon(Icons.play_arrow),
+              ),
             ),
           ),
-          const Card(
-            child: ListTile(
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 5a'),
+                      ),
+                      body: const Exercice5a(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
               title: Text('Exercice 5a'),
-              subtitle: Text('Grid of colored boxes'),
+              subtitle: Text('Grid of Colored Tiles'),
               trailing: Icon(Icons.play_arrow),
+              ),
             ),
           ),
-          const Card(
-            child: ListTile(
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 5b'),
+                      ),
+                      body: const Exercice5b(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
               title: Text('Exercice 5b'),
-              subtitle: Text('Fixed grid of cropped images'),
+              subtitle: Text('Fixed Grid of Cropped Image'),
               trailing: Icon(Icons.play_arrow),
+              ),
             ),
           ),
         ],

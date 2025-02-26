@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test_exos/tuile_page.dart';
 
-class PlateauPage extends StatefulWidget {
-  const PlateauPage({super.key});
+class Exercice5b extends StatefulWidget {
+  const Exercice5b({super.key});
 
   @override
-  State<PlateauPage> createState() => _PlateauPageState();
+  State<Exercice5b> createState() => _Exercice5bState();
 }
 
-class _PlateauPageState extends State<PlateauPage> {
+class _Exercice5bState extends State<Exercice5b> {
   final String imageUrl = 'https://picsum.photos/512/512';
   double _sliderValue = 3;
   late List<List<Tile>> tileMatrix;
