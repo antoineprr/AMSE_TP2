@@ -10,13 +10,11 @@ class Tile {
     return FittedBox(
       fit: BoxFit.fill,
       child: ClipRect(
-        child: Container(
-          child: Align(
-            alignment: this.alignment,
-            widthFactor: 0.3,
-            heightFactor: 0.3,
-            child: Image.network(this.imageURL),
-          ),
+        child: Align(
+          alignment: alignment,
+          widthFactor: 1.0,
+          heightFactor: 1.0,
+          child: Image.network(imageURL),
         ),
       ),
     );

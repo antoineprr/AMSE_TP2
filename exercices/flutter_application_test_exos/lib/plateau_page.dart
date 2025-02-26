@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test_exos/tuile_page.dart';  // Add this import
 
 class PlateauPage extends StatefulWidget {
   const PlateauPage({super.key});
@@ -16,77 +17,72 @@ class _PlateauPageState extends State<PlateauPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     int crossAxisCount = _sliderValue.round();
-    double maxGridHeight = screenHeight * 0.7; // Limite la hauteur de la grille
-    double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : screenHeight - 32).clamp(0, maxGridHeight);
+    double maxGridHeight = screenHeight * 0.7;
+    double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
     double tileSize = gridSize / crossAxisCount;
 
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: maxGridHeight,
-            child: Center(
-              child: SizedBox(
-                width: gridSize,
-                height: gridSize,
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 2.0,
-                    mainAxisSpacing: 2.0,
-                  ),
-                  itemCount: crossAxisCount * crossAxisCount,
-                  itemBuilder: (context, index) {
-                    int row = index ~/ crossAxisCount;
-                    int col = index % crossAxisCount;
-                    
-                    return ClipRect(
-                      child: Container(
-                        width: tileSize,
-                        height: tileSize,
-                        child: FittedBox(
-                          fit: BoxFit.none,
-                          alignment: Alignment(
-                            -1 + (col * 2 / (crossAxisCount - 1)),
-                            -1 + (row * 2 / (crossAxisCount - 1)),
-                          ),
-                          child: SizedBox(
-                            width: gridSize,
-                            height: gridSize,
-                            child: Image.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+      appBar: AppBar(
+        title: const Text('Puzzle Game'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: gridSize,
+              height: gridSize,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 2.0,
+                  mainAxisSpacing: 2.0,
                 ),
+                itemCount: crossAxisCount * crossAxisCount,
+                itemBuilder: (context, index) {
+                  int row = index ~/ crossAxisCount;
+                  int col = index % crossAxisCount;
+                  
+                  Tile tile = Tile(
+                    imageURL: imageUrl,
+                    alignment: Alignment(
+                      -1 + (col * 2 / (crossAxisCount - 1)),
+                      -1 + (row * 2 / (crossAxisCount - 1)),
+                    ),
+                  );
+                  
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    child: tile.croppedImageTile(),
+                  );
+                },
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
-                Slider(
-                  value: _sliderValue,
-                  min: 2,
-                  max: 6,
-                  divisions: 4,
-                  onChanged: (value) {
-                    setState(() {
-                      _sliderValue = value;
-                    });
-                  },
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
+                  Slider(
+                    value: _sliderValue,
+                    min: 2,
+                    max: 6,
+                    divisions: 4,
+                    onChanged: (value) {
+                      setState(() {
+                        _sliderValue = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
