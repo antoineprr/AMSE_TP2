@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test_exos/tuile_page.dart';  // Add this import
+import 'package:flutter_application_test_exos/tuile_page.dart';
 
 class Exercice5b extends StatefulWidget {
   const Exercice5b({super.key});
@@ -11,6 +11,20 @@ class Exercice5b extends StatefulWidget {
 class _Exercice5bState extends State<Exercice5b> {
   final String imageUrl = 'https://picsum.photos/512/512';
   double _sliderValue = 3;
+  late List<List<Tile>> tileMatrix;
+
+  List<List<Tile>> createTileMatrix(int size) {
+    return List.generate(size, (row) {
+      return List.generate(size, (col) {
+        return Tile(
+          imageURL: imageUrl,
+          alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1,
+          ),
+          gridSize: size, number: 0,
+        );
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +33,12 @@ class _Exercice5bState extends State<Exercice5b> {
     int crossAxisCount = _sliderValue.round();
     double maxGridHeight = screenHeight * 0.7;
     double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
-    double tileSize = gridSize / crossAxisCount;
+
+    tileMatrix = createTileMatrix(crossAxisCount);
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Puzzle Game'),
+        title: const Text('Taquin Board'),
         centerTitle: true,
       ),
       body: Center(
@@ -34,33 +48,21 @@ class _Exercice5bState extends State<Exercice5b> {
             SizedBox(
               width: gridSize,
               height: gridSize,
-              child: GridView.builder(
+              child: GridView.count(
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 2.0,
-                  mainAxisSpacing: 2.0,
-                ),
-                itemCount: crossAxisCount * crossAxisCount,
-                itemBuilder: (context, index) {
-                  int row = index ~/ crossAxisCount;
-                  int col = index % crossAxisCount;
-                  
-                  Tile tile = Tile(
-                    imageURL: imageUrl,
-                    alignment: Alignment(
-                      -1 + (col * 2 / (crossAxisCount - 1)),
-                      -1 + (row * 2 / (crossAxisCount - 1)),
-                    ),
-                  );
-                  
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1),
-                    ),
-                    child: tile.croppedImageTile(),
-                  );
-                },
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 2.0,
+                mainAxisSpacing: 2.0,
+                children: [
+                  for (var row in tileMatrix)
+                    for (var tile in row)
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                        child: tile.croppedImageTile(),
+                      )
+                ],
               ),
             ),
             Padding(
