@@ -18,9 +18,7 @@ class _PlateauPageState extends State<PlateauPage> {
       return List.generate(size, (col) {
         return Tile(
           imageURL: imageUrl,
-          alignment: Alignment(
-            -1 + (col * 2 / (size - 1)),
-            -1 + (row * 2 / (size - 1)),
+          alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1,
           ),
           gridSize: size, number: 0,
         );

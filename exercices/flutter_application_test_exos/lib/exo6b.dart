@@ -28,10 +28,7 @@ class _PlateauPageState extends State<PlateauPage> {
         bool isLastTile = (row == size - 1 && col == size - 1);
         return Tile(
           imageURL: imageUrl,
-          alignment: Alignment(
-            -1 + (col * 2 / (size - 1)),
-            -1 + (row * 2 / (size - 1)),
-          ),
+          alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1),
           gridSize: size,
           isEmpty: isLastTile,
           number: tileNumber,
@@ -39,15 +36,22 @@ class _PlateauPageState extends State<PlateauPage> {
       });
     });
     
+    var emptyPos = (size - 1, size - 1);
     var rng = Random();
-    for (var i = size - 1; i > 0; i--) {
-      for (var j = size - 1; j > 0; j--) {
-        var m = rng.nextInt(i + 1);
-        var n = rng.nextInt(j + 1);
-        var temp = matrix[i][j];
-        matrix[i][j] = matrix[m][n];
-        matrix[m][n] = temp;
-      }
+    for (int i = 0; i < 100 * size; i++) {
+      List<(int, int)> validMoves = [];
+      if (emptyPos.$1 > 0) validMoves.add((emptyPos.$1 - 1, emptyPos.$2)); 
+      if (emptyPos.$1 < size - 1) validMoves.add((emptyPos.$1 + 1, emptyPos.$2)); 
+      if (emptyPos.$2 > 0) validMoves.add((emptyPos.$1, emptyPos.$2 - 1)); 
+      if (emptyPos.$2 < size - 1) validMoves.add((emptyPos.$1, emptyPos.$2 + 1)); 
+      
+      var move = validMoves[rng.nextInt(validMoves.length)];
+      
+      var temp = matrix[emptyPos.$1][emptyPos.$2];
+      matrix[emptyPos.$1][emptyPos.$2] = matrix[move.$1][move.$2];
+      matrix[move.$1][move.$2] = temp;
+      
+      emptyPos = move;
     }
     return matrix;
   }
@@ -66,7 +70,7 @@ class _PlateauPageState extends State<PlateauPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Taquin Board'),
+        title: const Text('Jeu de taquin'),
         centerTitle: true,
       ),
       body: Center(
