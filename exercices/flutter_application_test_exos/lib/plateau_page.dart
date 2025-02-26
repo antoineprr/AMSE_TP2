@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test_exos/tuile_page.dart';  // Add this import
+import 'package:flutter_application_test_exos/tuile_page.dart';
 
 class PlateauPage extends StatefulWidget {
   const PlateauPage({super.key});
@@ -19,7 +19,6 @@ class _PlateauPageState extends State<PlateauPage> {
     int crossAxisCount = _sliderValue.round();
     double maxGridHeight = screenHeight * 0.7;
     double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
-    double tileSize = gridSize / crossAxisCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -51,6 +50,7 @@ class _PlateauPageState extends State<PlateauPage> {
                       -1 + (col * 2 / (crossAxisCount - 1)),
                       -1 + (row * 2 / (crossAxisCount - 1)),
                     ),
+                    gridSize: crossAxisCount, 
                   );
                   
                   return Container(

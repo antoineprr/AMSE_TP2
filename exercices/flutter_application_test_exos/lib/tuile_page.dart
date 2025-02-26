@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 class Tile {
   String imageURL;
   Alignment alignment;
+  int gridSize;  
 
-  Tile({required this.imageURL, required this.alignment});
+  Tile({
+    required this.imageURL, 
+    required this.alignment,
+    required this.gridSize,
+  });
 
   Widget croppedImageTile() {
     return FittedBox(
@@ -12,9 +17,12 @@ class Tile {
       child: ClipRect(
         child: Align(
           alignment: alignment,
-          widthFactor: 1.0,
-          heightFactor: 1.0,
-          child: Image.network(imageURL),
+          widthFactor: 1/gridSize,   
+          heightFactor: 1/gridSize, 
+          child: Image.network(
+            imageURL,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -22,7 +30,7 @@ class Tile {
 }
 
 Tile tile = new Tile(
-    imageURL: 'https://picsum.photos/512', alignment: Alignment(0, 0));
+    imageURL: 'https://picsum.photos/512', alignment: Alignment(0, 0), gridSize: 3);
 
 class DisplayTileWidget extends StatelessWidget {
   const DisplayTileWidget({super.key});
