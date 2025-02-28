@@ -21,6 +21,7 @@ class _Exercice5aState extends State<Exercice5a> {
     double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
     //double tileSize = gridSize / crossAxisCount;
 
+    int compteur=0; //Pour bien numéroter les tiles
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -45,13 +46,16 @@ class _Exercice5aState extends State<Exercice5a> {
                 itemBuilder: (context, index) {
                   int row = index ~/ crossAxisCount;
                   int col = index % crossAxisCount;
-                  
+
+                  compteur++; //incrémentation du number de la Tile qui va être crée
                   Tile tile = Tile(
                     imageURL: imageUrl,
                     alignment: Alignment(
                       -1 + (col * 2 / (crossAxisCount - 1)),
                       -1 + (row * 2 / (crossAxisCount - 1)),
                     ),
+                    gridSize: 3,
+                    number: compteur,
                   );
                   
                   return Container(

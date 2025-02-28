@@ -71,6 +71,7 @@ class DisplayTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Display a Tile as a Cropped Image'),
         centerTitle: true,
       ),
