@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test_exos/Exercice5a.dart';
+import 'package:flutter_application_test_exos/exo6a.dart';
+import 'package:flutter_application_test_exos/exo6b.dart';
 import 'package:flutter_application_test_exos/image_page.dart';
 import 'package:flutter_application_test_exos/image_page_animate.dart';
 import 'package:flutter_application_test_exos/plateau_page.dart';
@@ -147,6 +149,58 @@ class _MenuPageState extends State<MenuPage> {
               child: const ListTile(
               title: Text('Exercice 5b'),
               subtitle: Text('Fixed Grid of Cropped Image'),
+              trailing: Icon(Icons.play_arrow),
+              ),
+            ),
+          ),
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 6a'),
+                      ),
+                      body: const PositionedTiles(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
+              title: Text('Exercice 6a'),
+              subtitle: Text('Moving Tiles'),
+              trailing: Icon(Icons.play_arrow),
+              ),
+            ),
+          ),
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 6b'),
+                      ),
+                      body: const PlateauPage(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
+              title: Text('Exercice 6b'),
+              subtitle: Text('Fonctionnal Taquin'),
               trailing: Icon(Icons.play_arrow),
               ),
             ),

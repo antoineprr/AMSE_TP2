@@ -70,6 +70,7 @@ class _PlateauPageState extends State<PlateauPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Jeu de taquin'),
         centerTitle: true,
       ),
