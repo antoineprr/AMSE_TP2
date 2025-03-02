@@ -19,8 +19,7 @@ class _Exercice5aState extends State<Exercice5a> {
     int crossAxisCount = _sliderValue.round();
     double maxGridHeight = screenHeight * 0.7;
     double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
-    //double tileSize = gridSize / crossAxisCount;
-
+    
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -52,6 +51,8 @@ class _Exercice5aState extends State<Exercice5a> {
                       -1 + (col * 2 / (crossAxisCount - 1)),
                       -1 + (row * 2 / (crossAxisCount - 1)),
                     ),
+                    gridSize: crossAxisCount,
+                    number: index,
                   );
                   
                   return Container(
