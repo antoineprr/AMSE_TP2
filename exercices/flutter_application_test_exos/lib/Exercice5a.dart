@@ -23,7 +23,7 @@ class _Exercice5aState extends State<Exercice5a> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Puzzle Game'),
+        title: const Text('Image with tiles'),
         centerTitle: true,
       ),
       body: Center(

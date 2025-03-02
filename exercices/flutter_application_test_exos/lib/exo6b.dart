@@ -63,8 +63,8 @@ class _PlateauPageState extends State<PlateauPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     int crossAxisCount = _sliderValue.round();
-    double maxGridHeight = screenHeight * 0.7;
-    double gridSize = (screenWidth < screenHeight ? screenWidth - 32 : maxGridHeight - 32);
+    double maxGridHeight = screenHeight * 0.6;
+    double gridSize = min(screenWidth - 32, maxGridHeight);
 
     if (tileMatrix.length != crossAxisCount) {
       tileMatrix = createTileMatrix(crossAxisCount);
@@ -76,65 +76,79 @@ class _PlateauPageState extends State<PlateauPage> {
         title: const Text('Jeu de taquin'),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text("$MoveCount coups joués"),
-            SizedBox(height: 15),
-            SizedBox(
-              width: gridSize,
-              height: gridSize,
-                child: GridView.count(
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 2.0,
-                  mainAxisSpacing: 2.0,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (var i = 0; i < tileMatrix.length; i++)
-                      for (var j = 0; j < tileMatrix[i].length; j++)
-                        Container(
-                            decoration: BoxDecoration(
-                            border: Border.all(
-                              color: tileMatrix[i][j].isEmpty ? Colors.white : Colors.black,
-                              width: tileMatrix[i][j].isEmpty ? 0 : 1
-                            ),
-                            ),
-                            child: InkWell(
-                            onTap: () {
-                              var emptyPosition = findEmptyTile();
-                              if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
-                                swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
-                                setState(() {
-                                  MoveCount++;
-                                });
-                              }
-                            },
-                            child: tileMatrix[i][j].croppedImageTile(),
-                            )
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("$MoveCount coups joués", 
+                        style: Theme.of(context).textTheme.titleMedium),
+                    ),
+                    Container(
+                      width: gridSize,
+                      height: gridSize,
+                      child: GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 2.0,
+                        mainAxisSpacing: 2.0,
+                        children: [
+                          for (var i = 0; i < tileMatrix.length; i++)
+                            for (var j = 0; j < tileMatrix[i].length; j++)
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: tileMatrix[i][j].isEmpty ? Colors.transparent : Colors.black,
+                                    width: tileMatrix[i][j].isEmpty ? 0 : 1
+                                  ),
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    var emptyPosition = findEmptyTile();
+                                    if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
+                                      swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
+                                      setState(() {
+                                        MoveCount++;
+                                      });
+                                    }
+                                  },
+                                  child: tileMatrix[i][j].croppedImageTile(),
+                                )
+                              ),
                         ],
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
-                      children: [
-                  Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
-                  Slider(
-                    value: _sliderValue,
-                    min: 2,
-                    max: 6,
-                    divisions: 4,
-                    onChanged: (value) {
-                      setState(() {
-                        _sliderValue = value;
-                      });
-                    },
-                  ),
-                ],
+                        children: [
+                          Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
+                          Slider(
+                            value: _sliderValue,
+                            min: 2,
+                            max: 6,
+                            divisions: 4,
+                            onChanged: (value) {
+                              setState(() {
+                                _sliderValue = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

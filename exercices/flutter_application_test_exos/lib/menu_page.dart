@@ -4,7 +4,7 @@ import 'package:flutter_application_test_exos/exo6a.dart';
 import 'package:flutter_application_test_exos/exo6b.dart';
 import 'package:flutter_application_test_exos/image_page.dart';
 import 'package:flutter_application_test_exos/image_page_animate.dart';
-import 'package:flutter_application_test_exos/plateau_page.dart';
+import 'package:flutter_application_test_exos/exo5b.dart';
 import 'package:flutter_application_test_exos/tuile_page.dart';
 
 class MenuPage extends StatefulWidget {
