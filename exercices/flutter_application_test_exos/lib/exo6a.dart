@@ -55,6 +55,7 @@ class PositionedTilesState extends State<PositionedTiles> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Moving Tiles'),
         centerTitle: true,
       ),

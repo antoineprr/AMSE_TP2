@@ -14,6 +14,8 @@ class _PlateauPageState extends State<PlateauPage> {
   final String imageUrl = 'https://picsum.photos/512/512';
   double _sliderValue = 3;
   late List<List<Tile>> tileMatrix;
+  
+  int MoveCount=0;
 
   @override
   void initState() {
@@ -70,13 +72,15 @@ class _PlateauPageState extends State<PlateauPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Jeu de taquin'),
         centerTitle: true,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: [Text("$MoveCount coups joués"),
+            SizedBox(height: 15),
             SizedBox(
               width: gridSize,
               height: gridSize,
@@ -100,6 +104,9 @@ class _PlateauPageState extends State<PlateauPage> {
                               var emptyPosition = findEmptyTile();
                               if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
                                 swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
+                                setState(() {
+                                  MoveCount++;
+                                });
                               }
                             },
                             child: tileMatrix[i][j].croppedImageTile(),

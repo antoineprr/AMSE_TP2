@@ -14,13 +14,15 @@ class _Exercice5bState extends State<Exercice5b> {
   late List<List<Tile>> tileMatrix;
 
   List<List<Tile>> createTileMatrix(int size) {
+    int compteur = 0;  //Pour donnner le bon numéro aux tiles
     return List.generate(size, (row) {
       return List.generate(size, (col) {
+        compteur++;
         return Tile(
           imageURL: imageUrl,
           alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1,
           ),
-          gridSize: size, number: 0,
+          gridSize: size, number: compteur,
         );
       });
     });
@@ -38,6 +40,7 @@ class _Exercice5bState extends State<Exercice5b> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Taquin Board'),
         centerTitle: true,
       ),
