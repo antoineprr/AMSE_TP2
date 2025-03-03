@@ -15,7 +15,7 @@ class _PlateauPageState extends State<PlateauPage> {
   double _sliderValue = 3;
   late List<List<Tile>> tileMatrix;
   
-  int MoveCount=0;
+  int moveCount=0;
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _PlateauPageState extends State<PlateauPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text("$MoveCount coups joués", 
+                      child: Text("$moveCount coups joués", 
                         style: Theme.of(context).textTheme.titleMedium),
                     ),
                     Container(
@@ -115,7 +115,7 @@ class _PlateauPageState extends State<PlateauPage> {
                                     if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
                                       swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
                                       setState(() {
-                                        MoveCount++;
+                                        moveCount++;
                                       });
                                     }
                                   },

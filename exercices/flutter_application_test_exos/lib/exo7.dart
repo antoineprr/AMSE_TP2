@@ -16,6 +16,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
   late List<List<Tile>> tileMatrix;
   
   int moveCount=0;
+  Stopwatch chrono = Stopwatch();
 
   @override
   void initState() {
@@ -114,6 +115,12 @@ class _TaquinBoardState extends State<TaquinBoard> {
                                     var emptyPosition = findEmptyTile();
                                     if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
                                       swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
+                                      if(moveCount==0){
+                                        chrono.start();
+                                      }
+                                      if(isFinished()){
+                                        chrono.stop();
+                                      }
                                       setState(() {
                                         moveCount++;
                                       });
@@ -166,7 +173,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Félicitations !'),
-            content: Text('Vous avez résolu le puzzle en $moveCount coups.'),
+            content: Text('Vous avez résolu le puzzle en $moveCount coups en ${chrono.elapsedMilliseconds/100} s .'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Recommencer'),
