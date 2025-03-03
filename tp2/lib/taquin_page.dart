@@ -127,9 +127,6 @@ class _TaquinBoardState extends State<TaquinBoard> {
                                       if(moveCount==0){
                                         chrono.start();
                                       }
-                                      if(isFinished()){
-                                        chrono.stop();
-                                      }
                                       setState(() {
                                         moveCount++;
                                       });
@@ -177,6 +174,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix[row2][col2] = temp;
     });
     if (isFinished()){
+      chrono.stop();
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -186,6 +184,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Vous avez résolu le puzzle en $moveCount coups.'),
+            Text('Et en ${chrono.elapsedMilliseconds/1000} s'),
             const SizedBox(height: 16),
             Image.network(
               imageUrl,
@@ -202,6 +201,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
           setState(() {
             tileMatrix = createTileMatrix(_sliderValue.round());
             moveCount = 0;
+            chrono.reset();
           });
           Navigator.of(context).pop();
             },
@@ -214,6 +214,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
             imageUrl = 'https://picsum.photos/512/512?random=$random';
             tileMatrix = createTileMatrix(_sliderValue.round());
             moveCount = 0;
+            chrono.reset();
           });
           Navigator.of(context).pop();
             },
