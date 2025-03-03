@@ -114,6 +114,14 @@ class _TaquinBoardState extends State<TaquinBoard> {
         automaticallyImplyLeading: false,
         title: const Text('Jeu de taquin'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () {
+              _showFullImage(context);
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: LayoutBuilder(
@@ -312,9 +320,9 @@ class _TaquinBoardState extends State<TaquinBoard> {
         widget.imageFile!,
         fit: BoxFit.cover,
       );
-    } else if (widget.imageUrl != null) {
+    } else {
       return Image.network(
-        widget.imageUrl!,
+        imageUrl,
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
@@ -331,13 +339,46 @@ class _TaquinBoardState extends State<TaquinBoard> {
           );
         },
       );
-    } else {
-      return Container(
-        color: Colors.grey.shade300,
-        child: const Center(
-          child: Text('Aucune image'),
-        ),
-      );
     }
+  }
+  
+  void _showFullImage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  'Image complète',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Flexible(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _buildImage(),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fermer'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

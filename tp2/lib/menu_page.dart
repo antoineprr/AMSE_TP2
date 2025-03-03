@@ -85,7 +85,6 @@ class _MenuPageState extends State<MenuPage> {
         child: ListView(
           padding: const EdgeInsets.all(20.0),
           children: [
-            // Titre et description
             const Center(
               child: Text(
                 'Bienvenue dans le jeu du Taquin',
@@ -109,7 +108,6 @@ class _MenuPageState extends State<MenuPage> {
             ),
             const SizedBox(height: 30),
             
-            // Section image
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -178,7 +176,7 @@ class _MenuPageState extends State<MenuPage> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: _changeImage,
-                          icon: const Icon(Icons.refresh),
+                          icon: const Icon(Icons.refresh, color: Colors.white,),
                           label: const Text('Image aléatoire'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.indigo,
@@ -197,10 +195,10 @@ class _MenuPageState extends State<MenuPage> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () => _pickImage(ImageSource.camera),
-                          icon: const Icon(Icons.camera_alt),
-                          label: const Text('Prendre photo'),
+                          icon: const Icon(Icons.camera_alt, color: Colors.white,),
+                          label: const Text('Photo'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
+                            backgroundColor: Colors.amber,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                             shape: RoundedRectangleBorder(
@@ -210,10 +208,10 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () => _pickImage(ImageSource.gallery),
-                          icon: const Icon(Icons.photo_library),
+                          icon: const Icon(Icons.photo_library, color: Colors.white,),
                           label: const Text('Galerie'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade600,
+                            backgroundColor: Colors.deepOrange,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                             shape: RoundedRectangleBorder(
@@ -223,28 +221,12 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    _selectedImage == null ? TextField(
-                      controller: _imageUrlController,
-                      decoration: InputDecoration(
-                        labelText: 'URL de l\'image',
-                        hintText: 'Entrez une URL d\'image',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.check),
-                          onPressed: () => setState(() {}),
-                        ),
-                      ),
-                    ) : Container(),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
             
-            // Section paramètres
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -264,7 +246,6 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     const SizedBox(height: 20),
                     
-                    // Taille de la grille
                     ListTile(
                       leading: const Icon(Icons.grid_4x4, color: Colors.indigo),
                       title: const Text('Taille de la grille'),
@@ -314,7 +295,6 @@ class _MenuPageState extends State<MenuPage> {
                     
                     const Divider(),
                     
-                    // Affichage des numéros
                     SwitchListTile(
                       secondary: const Icon(Icons.numbers, color: Colors.indigo),
                       title: const Text('Afficher les numéros'),
@@ -331,7 +311,6 @@ class _MenuPageState extends State<MenuPage> {
             ),
             const SizedBox(height: 30),
             
-            // Bouton jouer
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -377,7 +356,6 @@ class _MenuPageState extends State<MenuPage> {
             ),
             const SizedBox(height: 20),
             
-            // Section règles du jeu
             ExpansionTile(
               title: const Text(
                 'Règles du jeu',

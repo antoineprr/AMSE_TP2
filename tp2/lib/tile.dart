@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 class Tile {
   final String? imageURL;
@@ -29,23 +30,37 @@ class Tile {
 
     Widget imageWidget;
     if (imageFile != null) {
-      imageWidget = Image.file(
-        imageFile!,
-        fit: BoxFit.cover,
-        alignment: alignment,
+      imageWidget = FutureBuilder<ui.Image>(
+        future: _getOptimizedSquareImage(imageFile!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done && 
+              snapshot.hasData) {
+            return RawImage(
+              image: snapshot.data,
+              fit: BoxFit.cover,
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       );
     } else {
       imageWidget = Image.network(
         imageURL!,
         fit: BoxFit.cover,
-        alignment: alignment,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                  : null,
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.grey.shade300,
+            child: const Center(
+              child: Text('Error loading image'),
             ),
           );
         },
@@ -53,45 +68,50 @@ class Tile {
     }
 
     return Stack(
-      fit: StackFit.expand,
       children: [
         FittedBox(
           fit: BoxFit.fill,
           child: ClipRect(
-            child: Container(
-              width: 400 / gridSize,
-              height: 400 / gridSize,
-              child: FittedBox(
-                fit: BoxFit.none,
-                alignment: alignment,
-                child: SizedBox(
-                  width: 400,
-                  height: 400,
-                  child: imageWidget,
-                ),
-              ),
+            child: Align(
+              alignment: alignment,
+              widthFactor: 1/gridSize,   
+              heightFactor: 1/gridSize, 
+              child: imageWidget,
             ),
           ),
         ),
         if (showNumber)
           Center(
-            child: Text(
-              number.toString(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    blurRadius: 3.0,
-                    color: Colors.black,
-                    offset: Offset(1.0, 1.0),
-                  ),
-                ],
+            child: Container(
+              child: Text(
+                '$number',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  shadows: const [
+                    Shadow(
+                      blurRadius: 3.0,
+                      color: Colors.black,
+                      offset: Offset(1.0, 1.0),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
       ],
     );
+  }
+  
+  Future<ui.Image> _getOptimizedSquareImage(File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    final codec = await ui.instantiateImageCodec(
+      bytes,
+      targetWidth: 512,
+      targetHeight: 512,
+    );
+    final frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
   }
 }
