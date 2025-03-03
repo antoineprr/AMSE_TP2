@@ -321,6 +321,7 @@ class _MenuPageState extends State<MenuPage> {
                         appBar: AppBar(
                           automaticallyImplyLeading: false,
                           title: const Text('Taquin'),
+                          automaticallyImplyLeading: false,
                           backgroundColor: Colors.indigo,
                         ),
                         body: TaquinBoard(

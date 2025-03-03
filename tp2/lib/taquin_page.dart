@@ -145,9 +145,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [(chrono.elapsedMilliseconds/1000 < 60 && timer.isActive)
-              ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
-              : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
-            
+                    ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
+                    : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
                     Center(
                       child: Container(
                         width: gridSize,
@@ -400,5 +399,11 @@ class _TaquinBoardState extends State<TaquinBoard> {
         );
       },
     );
+  }
+  
+  void starttimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
   }
 }
