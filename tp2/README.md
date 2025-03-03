@@ -1,16 +1,31 @@
 # tp2
 
-A new Flutter project.
+Réalisation d'un jeu de taquin dans le cadre de l'UV AMSE à IMT Nord Europe.
 
-## Getting Started
+## Démarrage
 
-This project is a starting point for a Flutter application.
+## Prérequis
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter](https://flutter.dev/docs/get-started/install)
+- [Dart](https://dart.dev/get-dart)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clonez le dépôt :
+    ```sh
+    git clone https://github.com/antoineprr/AMSE_TP2/tp2.git
+    ```
+2. Accédez au répertoire du projet :
+    ```sh
+    cd AMSE_TP2/tp2
+    ```
+3. Installez les dépendances :
+    ```sh
+    flutter pub get
+    ```
+
+## Exécution
+
+Pour exécuter l'application sur un émulateur ou un appareil connecté, utilisez la commande suivante :
+```sh
+flutter run
