@@ -196,29 +196,54 @@ class _TaquinBoardState extends State<TaquinBoard> {
           ],
         ),
         actions: <Widget>[
-          TextButton(
-            child: const Text('Recommencer'),
-            onPressed: () {
-          setState(() {
-            tileMatrix = createTileMatrix(_sliderValue.round());
-            moveCount = 0;
-            chrono.reset();
-          });
-          Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Nouvelle image'),
-            onPressed: () {
-          setState(() {
-            final random = Random().nextInt(1000);
-            imageUrl = 'https://picsum.photos/512/512?random=$random';
-            tileMatrix = createTileMatrix(_sliderValue.round());
-            moveCount = 0;
-            chrono.reset();
-          });
-          Navigator.of(context).pop();
-            },
+          Center(
+            child: Column(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(200, 40),
+                  ),
+                  child: const Text('Accueil'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();  
+                  },
+                ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 40),
+                ),
+                child: const Text('Recommencer'),
+                onPressed: () {
+                  setState(() {
+                    tileMatrix = createTileMatrix(_sliderValue.round());
+                    moveCount = 0;
+                    chrono.reset();
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 40),
+                ),
+                child: const Text('Nouvelle image'),
+                onPressed: () {
+                  setState(() {
+                    final random = Random().nextInt(1000);
+                    imageUrl = 'https://picsum.photos/512/512?random=$random';
+                    tileMatrix = createTileMatrix(_sliderValue.round());
+                    moveCount = 0;
+                    chrono.reset();
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              
+              ],
+            ),
           ),
         ],
           );
