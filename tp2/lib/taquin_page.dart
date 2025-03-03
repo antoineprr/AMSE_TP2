@@ -333,6 +333,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
+  }
+  
   Widget _buildImage() {
     if (widget.imageFile != null) {
       return Image.file(
@@ -399,11 +401,5 @@ class _TaquinBoardState extends State<TaquinBoard> {
         );
       },
     );
-  }
-  
-  void starttimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
   }
 }
