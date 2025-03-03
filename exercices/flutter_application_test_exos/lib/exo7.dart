@@ -118,9 +118,6 @@ class _TaquinBoardState extends State<TaquinBoard> {
                                       if(moveCount==0){
                                         chrono.start();
                                       }
-                                      if(isFinished()){
-                                        chrono.stop();
-                                      }
                                       setState(() {
                                         moveCount++;
                                       });
@@ -168,48 +165,52 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix[row2][col2] = temp;
     });
     if (isFinished()){
+      chrono.stop();
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-        title: const Text('Félicitations !'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Vous avez résolu le puzzle en $moveCount coups.'),
-            const SizedBox(height: 16),
-            Image.network(
-          imageUrl,
-          width: 200,
-          height: 200,
-          fit: BoxFit.cover,
+            title: const Text('Félicitations !'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Vous avez résolu le puzzle en $moveCount coups'),
+                Text('Et en ${chrono.elapsedMilliseconds/1000} s'),
+                const SizedBox(height: 16),
+                Image.network(
+              imageUrl,
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Recommencer'),
-            onPressed: () {
-          setState(() {
-            tileMatrix = createTileMatrix(_sliderValue.round());
-            moveCount = 0;
-          });
-          Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Nouvelle image'),
-            onPressed: () {
-          setState(() {
-            final random = Random().nextInt(1000);
-            imageUrl = 'https://picsum.photos/512/512?random=$random';
-            tileMatrix = createTileMatrix(_sliderValue.round());
-            moveCount = 0;
-          });
-          Navigator.of(context).pop();
-            },
-          ),
-        ],
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Recommencer'),
+                onPressed: () {
+              setState(() {
+                tileMatrix = createTileMatrix(_sliderValue.round());
+                moveCount = 0;
+                chrono.reset();
+              });
+              Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Nouvelle image'),
+                onPressed: () {
+              setState(() {
+                final random = Random().nextInt(1000);
+                imageUrl = 'https://picsum.photos/512/512?random=$random';
+                tileMatrix = createTileMatrix(_sliderValue.round());
+                moveCount = 0;
+                chrono.reset();
+              });
+              Navigator.of(context).pop();
+                },
+              ),
+            ],
           );
         },
       );
