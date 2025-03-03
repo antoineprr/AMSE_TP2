@@ -11,7 +11,7 @@ class TaquinBoard extends StatefulWidget {
 }
 
 class _TaquinBoardState extends State<TaquinBoard> {
-  final String imageUrl = 'https://picsum.photos/512/512';
+  String imageUrl = 'https://picsum.photos/512/512';
   double _sliderValue = 3;
   late List<List<Tile>> tileMatrix;
   
@@ -172,20 +172,44 @@ class _TaquinBoardState extends State<TaquinBoard> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Félicitations !'),
-            content: Text('Vous avez résolu le puzzle en $moveCount coups en ${chrono.elapsedMilliseconds/100} s .'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Recommencer'),
-                onPressed: () {
-                  setState(() {
-                    tileMatrix = createTileMatrix(_sliderValue.round());
-                    moveCount = 0;
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+        title: const Text('Félicitations !'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Vous avez résolu le puzzle en $moveCount coups.'),
+            const SizedBox(height: 16),
+            Image.network(
+          imageUrl,
+          width: 200,
+          height: 200,
+          fit: BoxFit.cover,
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Recommencer'),
+            onPressed: () {
+          setState(() {
+            tileMatrix = createTileMatrix(_sliderValue.round());
+            moveCount = 0;
+          });
+          Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Nouvelle image'),
+            onPressed: () {
+          setState(() {
+            final random = Random().nextInt(1000);
+            imageUrl = 'https://picsum.photos/512/512?random=$random';
+            tileMatrix = createTileMatrix(_sliderValue.round());
+            moveCount = 0;
+          });
+          Navigator.of(context).pop();
+            },
+          ),
+        ],
           );
         },
       );
