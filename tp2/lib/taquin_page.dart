@@ -12,13 +12,13 @@ class TaquinBoard extends StatefulWidget {
   final int difficulty;
 
   const TaquinBoard({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.imageFile,
     required this.gridSize,
     required this.showNumbers,
     required this.difficulty,
-  }) : super(key: key);
+  });
 
   @override
   State<TaquinBoard> createState() => _TaquinBoardState();
@@ -49,7 +49,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
       return List.generate(size, (col) {
         int tileNumber = row * size + col + 1; 
         return Tile(
-          imageURL: imageUrl,
+          imageURL: widget.imageFile == null ? imageUrl : null,
+          imageFile: widget.imageFile,
           alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1),
           gridSize: size,
           isEmpty: false,
@@ -211,11 +212,13 @@ class _TaquinBoardState extends State<TaquinBoard> {
               ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
               : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
             const SizedBox(height: 16),
-            Image.network(
-              imageUrl,
-              width: 200,
-              height: 200,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: _buildImage(),
+              ),
             ),
           ],
         ),
