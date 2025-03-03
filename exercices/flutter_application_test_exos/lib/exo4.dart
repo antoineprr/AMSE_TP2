@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'tuile_page.dart';
 
 Tile tile = new Tile(

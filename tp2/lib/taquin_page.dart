@@ -1,26 +1,35 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test_exos/tuile_page.dart';
+import 'package:tp2/tile.dart';
 
 class TaquinBoard extends StatefulWidget {
-  const TaquinBoard({super.key});
+  final String imageUrl;
+  final int gridSize;
+
+  const TaquinBoard({
+    super.key,
+    this.imageUrl = 'https://picsum.photos/512/512',
+    this.gridSize = 3,
+  });
 
   @override
   State<TaquinBoard> createState() => _TaquinBoardState();
 }
 
 class _TaquinBoardState extends State<TaquinBoard> {
-  String imageUrl = 'https://picsum.photos/512/512';
-  double _sliderValue = 3;
+  late String imageUrl;
+  late double _sliderValue;
   late List<List<Tile>> tileMatrix;
   
-  int moveCount=0;
+  int moveCount = 0;
   Stopwatch chrono = Stopwatch();
 
   @override
   void initState() {
     super.initState();
+    imageUrl = widget.imageUrl;
+    _sliderValue = widget.gridSize.toDouble();
     tileMatrix = createTileMatrix(_sliderValue.round());
   }
 
