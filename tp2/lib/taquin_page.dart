@@ -185,7 +185,9 @@ class _TaquinBoardState extends State<TaquinBoard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Vous avez résolu le puzzle en $moveCount coups.'),
-            Text('Et en ${chrono.elapsedMilliseconds/1000} s'),
+            (chrono.elapsedMilliseconds/1000 < 60)
+              ? Text('Et en ${chrono.elapsedMilliseconds~/1000}s')
+              : Text('Et en ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
             const SizedBox(height: 16),
             Image.network(
               imageUrl,
