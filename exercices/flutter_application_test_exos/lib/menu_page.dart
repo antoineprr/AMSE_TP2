@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test_exos/Exercice5a.dart';
+import 'package:flutter_application_test_exos/exo4.dart';
 import 'package:flutter_application_test_exos/exo6a.dart';
 import 'package:flutter_application_test_exos/exo6b.dart';
-import 'package:flutter_application_test_exos/image_page.dart';
-import 'package:flutter_application_test_exos/image_page_animate.dart';
+import 'package:flutter_application_test_exos/exo2.dart';
+import 'package:flutter_application_test_exos/exo2b.dart';
 import 'package:flutter_application_test_exos/exo5b.dart';
-import 'package:flutter_application_test_exos/tuile_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
