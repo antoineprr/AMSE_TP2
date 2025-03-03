@@ -320,6 +320,7 @@ class _MenuPageState extends State<MenuPage> {
                       return Scaffold(
                         appBar: AppBar(
                           title: const Text('Taquin'),
+                          automaticallyImplyLeading: false,
                           backgroundColor: Colors.indigo,
                         ),
                         body: TaquinBoard(

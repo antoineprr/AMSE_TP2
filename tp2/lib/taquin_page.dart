@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -33,6 +34,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
   
   int moveCount = 0;
   Stopwatch chrono = Stopwatch();
+  late Timer timer;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
     showNumbers = widget.showNumbers;
     difficulty = widget.difficulty;
     tileMatrix = createTileMatrix(_sliderValue.round());
+    starttimer();
   }
 
   List<List<Tile>> createTileMatrix(int size) {
@@ -111,6 +114,14 @@ class _TaquinBoardState extends State<TaquinBoard> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+            timer.cancel();
+            chrono.stop();
+          },
+        ),
         automaticallyImplyLeading: false,
         title: const Text('Jeu de taquin'),
         centerTitle: true,
@@ -132,7 +143,9 @@ class _TaquinBoardState extends State<TaquinBoard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+                  children: [(chrono.elapsedMilliseconds/1000 < 60 && timer.isActive)
+                    ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
+                    : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
                     Center(
                       child: Container(
                         width: gridSize,
@@ -206,6 +219,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix[row2][col2] = temp;
     });
     if (isFinished()){
+      timer.cancel();
       chrono.stop();
       showDialog(
         context: context,
@@ -380,5 +394,11 @@ class _TaquinBoardState extends State<TaquinBoard> {
         );
       },
     );
+  }
+  
+  void starttimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
   }
 }
