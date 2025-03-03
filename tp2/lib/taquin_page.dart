@@ -7,12 +7,14 @@ class TaquinBoard extends StatefulWidget {
   final String imageUrl;
   final int gridSize;
   final bool showNumbers;
+  final int difficulty; 
 
   const TaquinBoard({
     super.key,
     this.imageUrl = 'https://picsum.photos/512/512',
     this.gridSize = 3,
     this.showNumbers = true,
+    this.difficulty = 2,
   });
 
   @override
@@ -24,6 +26,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
   late double _sliderValue;
   late List<List<Tile>> tileMatrix;
   late bool showNumbers;
+  late int difficulty;
   
   int moveCount = 0;
   Stopwatch chrono = Stopwatch();
@@ -34,6 +37,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
     imageUrl = widget.imageUrl;
     _sliderValue = widget.gridSize.toDouble();
     showNumbers = widget.showNumbers;
+    difficulty = widget.difficulty;
     tileMatrix = createTileMatrix(_sliderValue.round());
   }
 
@@ -56,7 +60,22 @@ class _TaquinBoardState extends State<TaquinBoard> {
     var emptyPos = (rng.nextInt(size), rng.nextInt(size));
     matrix[emptyPos.$1][emptyPos.$2].isEmpty = true;
 
-    for (int i = 0; i < 100 * size; i++) {
+    int shuffleMoves;
+    switch (difficulty) {
+      case 1: 
+        shuffleMoves = 10 * size;
+        break;
+      case 2: 
+        shuffleMoves = 30 * size;
+        break;
+      case 3: 
+        shuffleMoves = 60 * size;
+        break;
+      default:
+        shuffleMoves = 30 * size; 
+    }
+
+    for (int i = 0; i < shuffleMoves; i++) {
       List<(int, int)> validMoves = [];
       if (emptyPos.$1 > 0) validMoves.add((emptyPos.$1 - 1, emptyPos.$2)); 
       if (emptyPos.$1 < size - 1) validMoves.add((emptyPos.$1 + 1, emptyPos.$2)); 
@@ -186,8 +205,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
           children: [
             Text('Vous avez résolu le puzzle en $moveCount coups.'),
             (chrono.elapsedMilliseconds/1000 < 60)
-              ? Text('Et en ${chrono.elapsedMilliseconds~/1000}s')
-              : Text('Et en ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
+              ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
+              : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
             const SizedBox(height: 16),
             Image.network(
               imageUrl,
