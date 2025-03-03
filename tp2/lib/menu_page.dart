@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tp2/taquin_page.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -13,12 +15,32 @@ class _MenuPageState extends State<MenuPage> {
   final TextEditingController _imageUrlController = TextEditingController(text: 'https://picsum.photos/512/512');
   int _gridSize = 3;
   bool _showNumbers = true;
-  int _difficulty = 2; 
+  int _difficulty = 2;
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
 
   void _changeImage() {
     final random = Random().nextInt(1000);
     _imageUrlController.text = 'https://picsum.photos/512/512?random=$random';
-    setState(() {});
+    setState(() {
+      _selectedImage = null;
+    });
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedImage = await _picker.pickImage(source: source);
+      if (pickedImage != null) {
+        setState(() {
+          _selectedImage = File(pickedImage.path);
+          _imageUrlController.text = '';
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la sélection de l\'image: ${e.toString()}')),
+      );
+    }
   }
 
   void _increaseGridSize() {
@@ -109,58 +131,100 @@ class _MenuPageState extends State<MenuPage> {
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          _imageUrlController.text,
-                          height: 200,
-                          width: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 200,
-                              width: 200,
-                              color: Colors.grey.shade300,
-                              child: const Center(
-                                child: Text('Impossible de charger l\'image'),
+                        child: _selectedImage != null
+                            ? Image.file(
+                                _selectedImage!,
+                                height: 200,
+                                width: 200,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                _imageUrlController.text,
+                                height: 200,
+                                width: 200,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 200,
+                                    width: 200,
+                                    color: Colors.grey.shade300,
+                                    child: const Center(
+                                      child: Text('Impossible de charger l\'image'),
+                                    ),
+                                  );
+                                },
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    height: 200,
+                                    width: 200,
+                                    color: Colors.grey.shade200,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded / 
+                                                loadingProgress.expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              height: 200,
-                              width: 200,
-                              color: Colors.grey.shade200,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / 
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: _changeImage,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Image aléatoire'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: _changeImage,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Image aléatoire'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigo,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => _pickImage(ImageSource.camera),
+                          icon: const Icon(Icons.camera_alt),
+                          label: const Text('Prendre photo'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () => _pickImage(ImageSource.gallery),
+                          icon: const Icon(Icons.photo_library),
+                          label: const Text('Galerie'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade600,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
-                    TextField(
+                    _selectedImage == null ? TextField(
                       controller: _imageUrlController,
                       decoration: InputDecoration(
                         labelText: 'URL de l\'image',
@@ -173,7 +237,7 @@ class _MenuPageState extends State<MenuPage> {
                           onPressed: () => setState(() {}),
                         ),
                       ),
-                    ),
+                    ) : Container(),
                   ],
                 ),
               ),
@@ -281,7 +345,8 @@ class _MenuPageState extends State<MenuPage> {
                           backgroundColor: Colors.indigo,
                         ),
                         body: TaquinBoard(
-                          imageUrl: _imageUrlController.text,
+                          imageUrl: _selectedImage != null ? null : _imageUrlController.text,
+                          imageFile: _selectedImage,
                           gridSize: _gridSize,
                           showNumbers: _showNumbers,
                           difficulty: _difficulty,
