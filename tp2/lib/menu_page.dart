@@ -340,6 +340,7 @@ class _MenuPageState extends State<MenuPage> {
                     builder: (BuildContext context) {
                       return Scaffold(
                         appBar: AppBar(
+                          automaticallyImplyLeading: false,
                           title: const Text('Taquin'),
                           backgroundColor: Colors.indigo,
                         ),
