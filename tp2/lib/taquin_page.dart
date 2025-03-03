@@ -112,6 +112,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix = createTileMatrix(crossAxisCount);
     }
 
+    //setState(() {});
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -328,6 +329,10 @@ class _TaquinBoardState extends State<TaquinBoard> {
     return true;
   }
 
+  void starttimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
   Widget _buildImage() {
     if (widget.imageFile != null) {
       return Image.file(
