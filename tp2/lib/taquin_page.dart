@@ -6,11 +6,13 @@ import 'package:tp2/tile.dart';
 class TaquinBoard extends StatefulWidget {
   final String imageUrl;
   final int gridSize;
+  final bool showNumbers;
 
   const TaquinBoard({
     super.key,
     this.imageUrl = 'https://picsum.photos/512/512',
     this.gridSize = 3,
+    this.showNumbers = true,
   });
 
   @override
@@ -21,6 +23,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
   late String imageUrl;
   late double _sliderValue;
   late List<List<Tile>> tileMatrix;
+  late bool showNumbers;
   
   int moveCount = 0;
   Stopwatch chrono = Stopwatch();
@@ -30,6 +33,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
     super.initState();
     imageUrl = widget.imageUrl;
     _sliderValue = widget.gridSize.toDouble();
+    showNumbers = widget.showNumbers;
     tileMatrix = createTileMatrix(_sliderValue.round());
   }
 
@@ -37,19 +41,21 @@ class _TaquinBoardState extends State<TaquinBoard> {
     var matrix = List.generate(size, (row) {
       return List.generate(size, (col) {
         int tileNumber = row * size + col + 1; 
-        bool isLastTile = (row == size - 1 && col == size - 1);
         return Tile(
           imageURL: imageUrl,
           alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1),
           gridSize: size,
-          isEmpty: isLastTile,
+          isEmpty: false,
           number: tileNumber,
+          showNumber: showNumbers,
         );
       });
     });
-    
-    var emptyPos = (size - 1, size - 1);
+
     var rng = Random();
+    var emptyPos = (rng.nextInt(size), rng.nextInt(size));
+    matrix[emptyPos.$1][emptyPos.$2].isEmpty = true;
+
     for (int i = 0; i < 100 * size; i++) {
       List<(int, int)> validMoves = [];
       if (emptyPos.$1 > 0) validMoves.add((emptyPos.$1 - 1, emptyPos.$2)); 
