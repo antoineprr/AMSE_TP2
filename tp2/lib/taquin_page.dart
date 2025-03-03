@@ -1,21 +1,24 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:tp2/tile.dart';
 
 class TaquinBoard extends StatefulWidget {
-  final String imageUrl;
+  final String? imageUrl;
+  final File? imageFile;
   final int gridSize;
   final bool showNumbers;
-  final int difficulty; 
+  final int difficulty;
 
   const TaquinBoard({
-    super.key,
-    this.imageUrl = 'https://picsum.photos/512/512',
-    this.gridSize = 3,
-    this.showNumbers = true,
-    this.difficulty = 2,
-  });
+    Key? key,
+    this.imageUrl,
+    this.imageFile,
+    required this.gridSize,
+    required this.showNumbers,
+    required this.difficulty,
+  }) : super(key: key);
 
   @override
   State<TaquinBoard> createState() => _TaquinBoardState();
@@ -34,7 +37,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
   @override
   void initState() {
     super.initState();
-    imageUrl = widget.imageUrl;
+    imageUrl = widget.imageUrl ?? 'https://picsum.photos/512/512?random=1';
     _sliderValue = widget.gridSize.toDouble();
     showNumbers = widget.showNumbers;
     difficulty = widget.difficulty;
@@ -298,5 +301,40 @@ class _TaquinBoardState extends State<TaquinBoard> {
       }
     }
     return true;
+  }
+
+  Widget _buildImage() {
+    if (widget.imageFile != null) {
+      return Image.file(
+        widget.imageFile!,
+        fit: BoxFit.cover,
+      );
+    } else if (widget.imageUrl != null) {
+      return Image.network(
+        widget.imageUrl!,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.grey.shade300,
+            child: const Center(
+              child: Text('Erreur de chargement de l\'image'),
+            ),
+          );
+        },
+      );
+    } else {
+      return Container(
+        color: Colors.grey.shade300,
+        child: const Center(
+          child: Text('Aucune image'),
+        ),
+      );
+    }
   }
 }
