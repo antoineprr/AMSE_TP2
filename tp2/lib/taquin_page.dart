@@ -94,65 +94,60 @@ class _TaquinBoardState extends State<TaquinBoard> {
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("$moveCount coups joués", 
-                        style: Theme.of(context).textTheme.titleMedium),
-                    ),
-                    Container(
-                      width: gridSize,
-                      height: gridSize,
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 2.0,
-                        mainAxisSpacing: 2.0,
-                        children: [
-                          for (var i = 0; i < tileMatrix.length; i++)
-                            for (var j = 0; j < tileMatrix[i].length; j++)
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: tileMatrix[i][j].isEmpty ? Colors.transparent : Colors.black,
-                                    width: tileMatrix[i][j].isEmpty ? 0 : 1
+                    Center(
+                      child: Container(
+                        width: gridSize,
+                        height: gridSize,
+                        child: GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 2.0,
+                          mainAxisSpacing: 2.0,
+                          children: [
+                            for (var i = 0; i < tileMatrix.length; i++)
+                              for (var j = 0; j < tileMatrix[i].length; j++)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: tileMatrix[i][j].isEmpty ? Colors.transparent : Colors.black,
+                                      width: tileMatrix[i][j].isEmpty ? 0 : 1
+                                    ),
                                   ),
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    var emptyPosition = findEmptyTile();
-                                    if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
-                                      swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
-                                      if(moveCount==0){
-                                        chrono.start();
+                                  child: InkWell(
+                                    onTap: () {
+                                      var emptyPosition = findEmptyTile();
+                                      if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
+                                        swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
+                                        if(moveCount==0){
+                                          chrono.start();
+                                        }
+                                        setState(() {
+                                          moveCount++;
+                                        });
                                       }
-                                      setState(() {
-                                        moveCount++;
-                                      });
-                                    }
-                                  },
-                                  child: tileMatrix[i][j].croppedImageTile(),
-                                )
-                              ),
-                        ],
+                                    },
+                                    child: tileMatrix[i][j].croppedImageTile(),
+                                  )
+                                ),
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('Grid size: ${_sliderValue.round()}x${_sliderValue.round()}'),
-                          Slider(
-                            value: _sliderValue,
-                            min: 2,
-                            max: 6,
-                            divisions: 4,
-                            onChanged: (value) {
-                              setState(() {
-                                _sliderValue = value;
-                              });
-                            },
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "$moveCount coups joués", 
+                              style: Theme.of(context).textTheme.titleMedium,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),

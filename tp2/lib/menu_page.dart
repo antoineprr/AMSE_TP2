@@ -12,6 +12,7 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   final TextEditingController _imageUrlController = TextEditingController(text: 'https://picsum.photos/512/512');
+  int _gridSize = 3;
 
   void _changeImage() {
     final random = Random().nextInt(1000);
@@ -19,11 +20,27 @@ class _MenuPageState extends State<MenuPage> {
     setState(() {});
   }
 
+  void _increaseGridSize() {
+    if (_gridSize < 6) {
+      setState(() {
+        _gridSize++;
+      });
+    }
+  }
+
+  void _decreaseGridSize() {
+    if (_gridSize > 2) {
+      setState(() {
+        _gridSize--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu Page'),
+        title: Text('Accueil'),
       ),
       body: ListView(
         children: [
@@ -46,31 +63,42 @@ class _MenuPageState extends State<MenuPage> {
                   },
                 ),
                 const SizedBox(height: 16),
-                Card(
-                  clipBehavior: Clip.hardEdge,
-                  child: InkWell(
-                    splashColor: Colors.blueGrey,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<Widget>(
-                          builder: (BuildContext context) {
-                            return Scaffold(
-                              appBar: AppBar(
-                                title: const Text('Taquin'),
-                              ),
-                              body: TaquinBoard(imageUrl: _imageUrlController.text),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                    child: const ListTile(
-                      title: Text('Taquin basique'),
-                      subtitle: Text('Jeu de taquin basique'),
-                      trailing: Icon(Icons.play_arrow),
+                Text('Taille de la grille : $_gridSize x $_gridSize'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: _decreaseGridSize,
                     ),
-                  ),
+                    Text('$_gridSize'),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _increaseGridSize,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<Widget>(
+                        builder: (BuildContext context) {
+                          return Scaffold(
+                            appBar: AppBar(
+                              title: const Text('Taquin'),
+                            ),
+                            body: TaquinBoard(
+                              imageUrl: _imageUrlController.text,
+                              gridSize: _gridSize,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text('Jouer'),
                 ),
               ],
             ),
