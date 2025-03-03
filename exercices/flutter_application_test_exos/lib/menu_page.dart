@@ -6,6 +6,7 @@ import 'package:flutter_application_test_exos/exo6b.dart';
 import 'package:flutter_application_test_exos/exo2.dart';
 import 'package:flutter_application_test_exos/exo2b.dart';
 import 'package:flutter_application_test_exos/exo5b.dart';
+import 'package:flutter_application_test_exos/exo7.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -200,7 +201,33 @@ class _MenuPageState extends State<MenuPage> {
               },
               child: const ListTile(
               title: Text('Exercice 6b'),
-              subtitle: Text('Fonctionnal Taquin'),
+              subtitle: Text('Mouvement fonctionnel'),
+              trailing: Icon(Icons.play_arrow),
+              ),
+            ),
+          ),
+          Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              splashColor: Colors.blueGrey,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) {
+                      return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Exercice 7'),
+                      ),
+                      body: const TaquinBoard(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const ListTile(
+              title: Text('Exercice 7'),
+              subtitle: Text('Taquin'),
               trailing: Icon(Icons.play_arrow),
               ),
             ),
