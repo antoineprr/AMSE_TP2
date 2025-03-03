@@ -13,6 +13,7 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   final TextEditingController _imageUrlController = TextEditingController(text: 'https://picsum.photos/512/512');
   int _gridSize = 3;
+  bool _showNumbers = true;
 
   void _changeImage() {
     final random = Random().nextInt(1000);
@@ -34,6 +35,12 @@ class _MenuPageState extends State<MenuPage> {
         _gridSize--;
       });
     }
+  }
+
+  void _toggleShowNumbers() {
+    setState(() {
+      _showNumbers = !_showNumbers;
+    });
   }
 
   @override
@@ -79,6 +86,19 @@ class _MenuPageState extends State<MenuPage> {
                   ],
                 ),
                 const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Afficher les numéros : '),
+                    Switch(
+                      value: _showNumbers,
+                      onChanged: (value) {
+                        _toggleShowNumbers();
+                      },
+                    ),
+                  ]
+                ),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -92,6 +112,7 @@ class _MenuPageState extends State<MenuPage> {
                             body: TaquinBoard(
                               imageUrl: _imageUrlController.text,
                               gridSize: _gridSize,
+                              showNumbers: _showNumbers,
                             ),
                           );
                         },
