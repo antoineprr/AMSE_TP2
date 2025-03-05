@@ -162,7 +162,7 @@ class _MenuPageState extends State<MenuPage> {
           children: [
             const Center(
               child: Text(
-                'Bienvenue dans le jeu du Taquin',
+                'Bienvenue !',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -173,7 +173,7 @@ class _MenuPageState extends State<MenuPage> {
             const SizedBox(height: 10),
             const Center(
               child: Text(
-                'Configurez votre partie et commencez à jouer !',
+                'Configurez votre partie et commencez à jouer.',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black87,

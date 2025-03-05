@@ -212,11 +212,31 @@ class Tile {
   
   Future<ui.Image> _getOptimizedSquareImage(File imageFile) async {
     final bytes = await imageFile.readAsBytes();
+    
+    final originalCodec = await ui.instantiateImageCodec(bytes);
+    final originalFrame = await originalCodec.getNextFrame();
+    final originalImage = originalFrame.image;
+    
+    int targetWidth = originalImage.width;
+    int targetHeight = originalImage.height;
+    
+    const int maxDimension = 1024; 
+    if (targetWidth > maxDimension || targetHeight > maxDimension) {
+      if (targetWidth > targetHeight) {
+        targetHeight = (targetHeight * maxDimension / targetWidth).round();
+        targetWidth = maxDimension;
+      } else {
+        targetWidth = (targetWidth * maxDimension / targetHeight).round();
+        targetHeight = maxDimension;
+      }
+    }
+    
     final codec = await ui.instantiateImageCodec(
       bytes,
-      targetWidth: 512,
-      targetHeight: 512,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
     );
+    
     final frameInfo = await codec.getNextFrame();
     return frameInfo.image;
   }

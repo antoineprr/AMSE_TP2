@@ -179,13 +179,13 @@ class _HighScoresPageState extends State<HighScoresPage> {
 
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      child: ListTile(
-                        title: Text('Grille: ${game['gridSize']}, Difficulté: ${game['difficulty']}'),
+                        child: ListTile(
+                        title: Text('Grille : ${game['gridSize']}, Difficulté : ${game['difficulty']}, ${game['showNumbers'] ? 'Avec numéros' : 'Sans numéros'}'),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Temps: $formattedTime, Coups: ${game['moves']}'),
-                            Text(game['showNumbers'] ? 'Avec numéros' : 'Sans numéros'),
+                            Text('Temps : $formattedTime'),
+                            Text('Nombre de coups : ${game['moves']}'),
                           ],
                         ),
                       ),
