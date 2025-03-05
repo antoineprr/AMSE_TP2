@@ -69,12 +69,6 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Jeu du Taquin'),
-        backgroundColor: Colors.indigo,
-        centerTitle: true,
-        elevation: 4,
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
