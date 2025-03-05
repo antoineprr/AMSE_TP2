@@ -34,7 +34,7 @@ class MyHomePage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Taquin',
+            "Tac'1",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,

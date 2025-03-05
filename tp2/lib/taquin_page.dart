@@ -74,7 +74,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
   List<List<Tile>> createTileMatrix(int size) {
     var matrix = List.generate(size, (row) {
       return List.generate(size, (col) {
-        int tileNumber = row * size + col + 1; 
+        int tileNumber = row * size + col + 1;
         return Tile(
           imageURL: (widget.imageFile == null && widget.imageBytes == null) ? imageUrl : null,
           imageFile: widget.imageFile,
@@ -148,7 +148,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
           },
         ),
         automaticallyImplyLeading: false,
-        title: const Text('Jeu de taquin'),
+        title: Text('Taquin : ${_sliderValue.round()}x${_sliderValue.round()}'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -250,8 +250,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
       timer.cancel();
       chrono.stop();
       
-      _audioPlayer.seek(Duration.zero);
-      _audioPlayer.play();
+    _audioPlayer.seek(Duration.zero);
+    _audioPlayer.play();
       
       final int timeInSeconds = chrono.elapsedMilliseconds ~/ 1000;
       String gridSizeStr = "${_sliderValue.round()}x${_sliderValue.round()}";
