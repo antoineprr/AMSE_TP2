@@ -70,7 +70,7 @@ class Tile {
     return Stack(
       children: [
         FittedBox(
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
           child: ClipRect(
             child: Align(
               alignment: alignment,
