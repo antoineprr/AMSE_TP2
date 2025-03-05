@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:tp2/tile.dart';
 
 class TaquinBoard extends StatefulWidget {
@@ -31,6 +32,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
   late List<List<Tile>> tileMatrix;
   late bool showNumbers;
   late int difficulty;
+  late AudioPlayer _audioPlayer;
+
   
   int moveCount = 0;
   Stopwatch chrono = Stopwatch();
@@ -45,6 +48,21 @@ class _TaquinBoardState extends State<TaquinBoard> {
     difficulty = widget.difficulty;
     tileMatrix = createTileMatrix(_sliderValue.round());
     starttimer();
+    _initAudio();
+  }
+
+  Future<void> _initAudio() async {
+    _audioPlayer = AudioPlayer();
+    await _audioPlayer.setAsset('assets/audio/move.mp3');
+    await _audioPlayer.setVolume(1.0);
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    timer.cancel();
+    chrono.stop();
+    super.dispose();
   }
 
   List<List<Tile>> createTileMatrix(int size) {
@@ -219,6 +237,10 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix[row1][col1] = tileMatrix[row2][col2];
       tileMatrix[row2][col2] = temp;
     });
+
+    _audioPlayer.seek(Duration.zero);
+    _audioPlayer.play();
+
     if (isFinished()){
       timer.cancel();
       chrono.stop();
