@@ -33,7 +33,13 @@ class _MenuPageState extends State<MenuPage> {
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? pickedImage = await _picker.pickImage(source: source);
+      final XFile? pickedImage = await _picker.pickImage(
+        source: source,
+        maxWidth: _gridSize > 4 ? 1024 : null,
+        maxHeight: _gridSize > 4 ? 1024 : null,
+        imageQuality: _gridSize > 4 ? 95 : 100
+      );
+      
       if (pickedImage != null) {
         if (kIsWeb) {
           final imageBytes = await pickedImage.readAsBytes();
@@ -78,18 +84,20 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildImageWidget() {
+    const double previewSize = 180; 
+    
     if (_webImage != null) {
       return Image.memory(
         _webImage!,
-        height: 200,
-        width: 200,
+        height: previewSize,
+        width: previewSize,
         fit: BoxFit.cover,
       );
     } else if (_selectedImage != null && !kIsWeb) {
       return Image.file(
         _selectedImage!,
-        height: 200,
-        width: 200,
+        height: previewSize,
+        width: previewSize,
         fit: BoxFit.cover,
       );
     } else {

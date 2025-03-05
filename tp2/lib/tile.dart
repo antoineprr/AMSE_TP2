@@ -220,7 +220,8 @@ class Tile {
     int targetWidth = originalImage.width;
     int targetHeight = originalImage.height;
     
-    const int maxDimension = 1024; 
+    const int maxDimension = 512; 
+    
     if (targetWidth > maxDimension || targetHeight > maxDimension) {
       if (targetWidth > targetHeight) {
         targetHeight = (targetHeight * maxDimension / targetWidth).round();
@@ -235,9 +236,10 @@ class Tile {
       bytes,
       targetWidth: targetWidth,
       targetHeight: targetHeight,
+      allowUpscaling: false
     );
     
-    final frameInfo = await codec.getNextFrame();
-    return frameInfo.image;
+    final frame = await codec.getNextFrame();
+    return frame.image;
   }
 }
