@@ -36,17 +36,15 @@ class _MenuPageState extends State<MenuPage> {
       final XFile? pickedImage = await _picker.pickImage(source: source);
       if (pickedImage != null) {
         if (kIsWeb) {
-          // Sur le web, on lit l'image en tant que bytes
           final imageBytes = await pickedImage.readAsBytes();
           setState(() {
             _webImage = imageBytes;
-            _selectedImage = null;  // Pas besoin sur le web
+            _selectedImage = null;  
           });
         } else {
-          // Sur mobile, on utilise File
           setState(() {
             _selectedImage = File(pickedImage.path);
-            _webImage = null;  // Pas besoin sur mobile
+            _webImage = null;  
           });
         }
       }

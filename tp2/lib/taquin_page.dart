@@ -42,6 +42,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
 
   
   int moveCount = 0;
+  int nbCoupsMelange = 0; 
   Stopwatch chrono = Stopwatch();
   late Timer timer;
 
@@ -92,22 +93,24 @@ class _TaquinBoardState extends State<TaquinBoard> {
     var emptyPos = (rng.nextInt(size), rng.nextInt(size));
     matrix[emptyPos.$1][emptyPos.$2].isEmpty = true;
 
-    int shuffleMoves;
+    int nbCoupsMelange;
     switch (difficulty) {
       case 1: 
-        shuffleMoves = 10 * size;
+        nbCoupsMelange = 10 * size;
         break;
       case 2: 
-        shuffleMoves = 30 * size;
+        nbCoupsMelange = 30 * size;
         break;
       case 3: 
-        shuffleMoves = 60 * size;
+        nbCoupsMelange = 60 * size;
         break;
       default:
-        shuffleMoves = 30 * size; 
+        nbCoupsMelange = 30 * size; 
     }
-
-    for (int i = 0; i < shuffleMoves; i++) {
+    
+    this.nbCoupsMelange = nbCoupsMelange; 
+    
+    for (int i = 0; i < nbCoupsMelange; i++) {
       List<(int, int)> validMoves = [];
       if (emptyPos.$1 > 0) validMoves.add((emptyPos.$1 - 1, emptyPos.$2)); 
       if (emptyPos.$1 < size - 1) validMoves.add((emptyPos.$1 + 1, emptyPos.$2)); 
@@ -148,90 +151,164 @@ class _TaquinBoardState extends State<TaquinBoard> {
           },
         ),
         automaticallyImplyLeading: false,
-        title: Text('Taquin : ${_sliderValue.round()}x${_sliderValue.round()}'),
+        title: Text(
+          'Taquin : ${_sliderValue.round()}x${_sliderValue.round()}',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        elevation: 2,
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () {
               _showFullImage(context);
             },
+            tooltip: "Voir l'image complète",
           ),
         ],
       ),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [(chrono.elapsedMilliseconds/1000 < 60 && timer.isActive)
-                    ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
-                    : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
-                    Center(
-                      child: Container(
-                        width: gridSize,
-                        height: gridSize,
-                        child: GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: 2.0,
-                          mainAxisSpacing: 2.0,
-                          children: [
-                            for (var i = 0; i < tileMatrix.length; i++)
-                              for (var j = 0; j < tileMatrix[i].length; j++)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: tileMatrix[i][j].isEmpty ? Colors.transparent : Colors.black,
-                                      width: tileMatrix[i][j].isEmpty ? 0 : 1
-                                    ),
-                                  ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      var emptyPosition = findEmptyTile();
-                                      if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
-                                        swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
-                                        if(moveCount==0){
-                                          chrono.start();
-                                        }
-                                        setState(() {
-                                          moveCount++;
-                                        });
-                                      }
-                                    },
-                                    child: tileMatrix[i][j].croppedImageTile(),
+        child: Center(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Card(
+                        margin: const EdgeInsets.all(12.0),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.timer, color: Colors.blue),
+                              const SizedBox(width: 8),
+                              (chrono.elapsedMilliseconds/1000 < 60 && timer.isActive)
+                                ? Text(
+                                    'Temps : ${chrono.elapsedMilliseconds~/1000}s',
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                                   )
-                                ),
-                          ],
+                                : Text(
+                                    'Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s',
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                  ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "$moveCount coups joués", 
-                              style: Theme.of(context).textTheme.titleMedium,
-                              textAlign: TextAlign.center,
-                            ),
+                      
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Container(
+                          width: gridSize,
+                          height: gridSize,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                        ],
+                          child: GridView.count(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisCount: crossAxisCount,
+                            crossAxisSpacing: 2.0,
+                            mainAxisSpacing: 2.0,
+                            children: [
+                              for (var i = 0; i < tileMatrix.length; i++)
+                                for (var j = 0; j < tileMatrix[i].length; j++)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: tileMatrix[i][j].isEmpty ? Colors.transparent : Colors.black,
+                                        width: tileMatrix[i][j].isEmpty ? 0 : 1
+                                      ),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        var emptyPosition = findEmptyTile();
+                                        if (isAdjacentToEmpty(i, j, emptyPosition.$1, emptyPosition.$2)) {
+                                          swapTiles(i, j, emptyPosition.$1, emptyPosition.$2);
+                                          if(moveCount==0){
+                                            chrono.start();
+                                          }
+                                          setState(() {
+                                            moveCount++;
+                                          });
+                                        }
+                                      },
+                                      child: tileMatrix[i][j].croppedImageTile(),
+                                    )
+                                  ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      
+                      Card(
+                        margin: const EdgeInsets.all(16.0),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.swipe, color: Colors.orange),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "$moveCount coups joués", 
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.shuffle, color: Colors.grey[600]),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Mélangé avec $nbCoupsMelange mouvements",
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey[700],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -281,83 +358,129 @@ class _TaquinBoardState extends State<TaquinBoard> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-        title: const Text('Félicitations !'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Vous avez résolu le puzzle en $moveCount coups.'),
-            (chrono.elapsedMilliseconds/1000 < 60)
-              ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
-              : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
-            const SizedBox(height: 8),
-            const Text('Votre score a été enregistré !',
-              style: TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                width: 200,
-                height: 200,
-                child: _buildImage(),
-              ),
-            ),
-          ],
-        ),
-        actions: <Widget>[
-          Center(
-            child: Column(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(200, 40),
-                  ),
-                  child: const Text('Accueil'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();  
-                  },
-                ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 40),
-                ),
-                child: const Text('Recommencer'),
-                onPressed: () {
-                  setState(() {
-                    tileMatrix = createTileMatrix(_sliderValue.round());
-                    moveCount = 0;
-                    chrono.reset();
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 40),
-                ),
-                child: const Text('Nouvelle image'),
-                onPressed: () {
-                  setState(() {
-                    final random = Random().nextInt(1000);
-                    imageUrl = 'https://picsum.photos/512/512?random=$random';
-                    tileMatrix = createTileMatrix(_sliderValue.round());
-                    moveCount = 0;
-                    chrono.reset();
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-              
+                Icon(Icons.celebration, color: Colors.amber),
+                const SizedBox(width: 8),
+                const Text('Félicitations !'),
               ],
             ),
-          ),
-        ],
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  color: Colors.blue.shade50,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.swipe, color: Colors.orange),
+                            const SizedBox(width: 8),
+                            Text('Résolu en $moveCount coups', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.timer, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            (chrono.elapsedMilliseconds/1000 < 60)
+                              ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
+                              : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Text('Votre score a été enregistré !',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: _buildImage(),
+                  ),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              Center(
+                child: Column(
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.home),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      label: const Text('Accueil'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();  
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.refresh),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      label: const Text('Recommencer'),
+                      onPressed: () {
+                        setState(() {
+                          tileMatrix = createTileMatrix(_sliderValue.round());
+                          moveCount = 0;
+                          chrono.reset();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.image),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      label: const Text('Nouvelle image'),
+                      onPressed: () {
+                        setState(() {
+                          final random = Random().nextInt(1000);
+                          imageUrl = 'https://picsum.photos/512/512?random=$random';
+                          tileMatrix = createTileMatrix(_sliderValue.round());
+                          moveCount = 0;
+                          chrono.reset();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           );
         },
       );
@@ -435,33 +558,72 @@ class _TaquinBoardState extends State<TaquinBoard> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 5,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  'Image complète',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
                   ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.image, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Image complète',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Flexible(
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: Container(
-                    padding: const EdgeInsets.all(8.0),
+                    margin: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
                     child: _buildImage(),
                   ),
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Fermer'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.close),
+                  label: const Text('Fermer'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
             ],
           ),
