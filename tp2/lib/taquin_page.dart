@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:tp2/game_manager.dart';
 import 'package:tp2/tile.dart';
 
 class TaquinBoard extends StatefulWidget {
@@ -130,7 +131,6 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix = createTileMatrix(crossAxisCount);
     }
 
-    //setState(() {});
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -244,6 +244,33 @@ class _TaquinBoardState extends State<TaquinBoard> {
     if (isFinished()){
       timer.cancel();
       chrono.stop();
+      
+      // Enregistrer le score dans GameManager
+      final int timeInSeconds = chrono.elapsedMilliseconds ~/ 1000;
+      String gridSizeStr = "${_sliderValue.round()}x${_sliderValue.round()}";
+      String difficultyStr;
+      switch (difficulty) {
+        case 1: 
+          difficultyStr = "Facile";
+          break;
+        case 2: 
+          difficultyStr = "Moyen";
+          break;
+        case 3: 
+          difficultyStr = "Difficile";
+          break;
+        default:
+          difficultyStr = "Moyen";
+      }
+      
+      // Appel asynchrone pour enregistrer le score
+      GameManager.addGame(gridSizeStr, difficultyStr, timeInSeconds, moveCount)
+          .then((_) {
+        print('Score enregistré avec succès');
+      }).catchError((error) {
+        print('Erreur lors de l\'enregistrement du score: $error');
+      });
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -256,6 +283,13 @@ class _TaquinBoardState extends State<TaquinBoard> {
             (chrono.elapsedMilliseconds/1000 < 60)
               ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
               : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
+            const SizedBox(height: 8),
+            const Text('Votre score a été enregistré !',
+              style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
