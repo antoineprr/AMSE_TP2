@@ -78,7 +78,14 @@ class Tile {
               alignment: alignment,
               widthFactor: 1/gridSize,   
               heightFactor: 1/gridSize, 
-              child: imageWidget,
+              child: SizedBox(
+                width: gridSize * 400.0,  
+                height: gridSize * 400.0, 
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: imageWidget,
+                ),
+              ),
             ),
           ),
         ),
@@ -153,9 +160,16 @@ class Tile {
               alignment: alignment,
               widthFactor: 1/gridSize,   
               heightFactor: 1/gridSize, 
-              child: RawImage(
-                image: image,
-                fit: BoxFit.cover,
+              child: SizedBox(
+                width: gridSize * 400.0,  
+                height: gridSize * 400.0, 
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: RawImage(
+                    image: image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),

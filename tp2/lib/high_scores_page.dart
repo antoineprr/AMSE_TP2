@@ -12,6 +12,7 @@ class _HighScoresPageState extends State<HighScoresPage> {
   String _sortOption = 'time';
   String _filterGridSize = 'All';
   String _filterDifficulty = 'All';
+  String _filterShowNumbers = 'All';
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class _HighScoresPageState extends State<HighScoresPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Filtres et tri :', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Filtres et tri :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -100,6 +101,30 @@ class _HighScoresPageState extends State<HighScoresPage> {
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      const Text('Affichage :'),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButton<String>(
+                          value: _filterShowNumbers,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _filterShowNumbers = newValue!;
+                            });
+                          },
+                          items: <String>['All', 'Avec numéros', 'Sans numéros']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value == 'All' ? 'Tous' : value),
+                            );
+                          }).toList(),
+                          isExpanded: true,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -119,6 +144,12 @@ class _HighScoresPageState extends State<HighScoresPage> {
                 }
                 if (_filterDifficulty != 'All') {
                   bestGames = bestGames.where((game) => game['difficulty'] == _filterDifficulty).toList();
+                }
+                if (_filterShowNumbers != 'All') {
+                  bestGames = bestGames.where((game) => 
+                    (_filterShowNumbers == 'Avec numéros' && game['showNumbers']) ||
+                    (_filterShowNumbers == 'Sans numéros' && !game['showNumbers'])
+                  ).toList();
                 }
 
                 bestGames.sort((a, b) {
