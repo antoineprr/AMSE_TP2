@@ -32,8 +32,9 @@ class _MenuPageState extends State<MenuPage> {
       final XFile? pickedImage = await _picker.pickImage(source: source);
       if (pickedImage != null) {
         setState(() {
-          _selectedImage = File(pickedImage.path);
-          _imageUrlController.text = '';
+          //_selectedImage = File(pickedImage.path);
+          _selectedImage = null;
+          _imageUrlController.text = '${pickedImage.path}';
         });
       }
     } catch (e) {

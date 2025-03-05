@@ -13,6 +13,8 @@ class TaquinBoard extends StatefulWidget {
   final bool showNumbers;
   final int difficulty;
 
+
+
   const TaquinBoard({
     super.key,
     this.imageUrl,
@@ -53,7 +55,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
 
   Future<void> _initAudio() async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setAsset('audio/move.wav');
+    await _audioPlayer.setAsset('assets/audio/move.wav');
     await _audioPlayer.setVolume(1.0);
   }
 
@@ -130,7 +132,6 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix = createTileMatrix(crossAxisCount);
     }
 
-    //setState(() {});
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
