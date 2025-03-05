@@ -244,16 +244,14 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix[row2][col2] = temp;
     });
 
-    _initAudio();
-    _audioPlayer.seek(Duration.zero);
-    _audioPlayer.play();
+    
 
     if (isFinished()){
       timer.cancel();
       chrono.stop();
       
-    _audioPlayer.seek(Duration.zero);
-    _audioPlayer.play();
+      _audioPlayer.seek(Duration.zero);
+      _audioPlayer.play();
       
       final int timeInSeconds = chrono.elapsedMilliseconds ~/ 1000;
       String gridSizeStr = "${_sliderValue.round()}x${_sliderValue.round()}";

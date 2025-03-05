@@ -6,12 +6,15 @@ import 'dart:ui' as ui;
 class Tile {
   final String? imageURL;
   final File? imageFile;
-  final Uint8List? imageBytes; 
+  final Uint8List? imageBytes;
   final Alignment alignment;
   final int gridSize;
   bool isEmpty;
   final int number;
   final bool showNumber;
+  
+  static final Map<String, ui.Image> _imageCache = {};
+  static final Map<String, Widget> _widgetCache = {};
 
   Tile({
     this.imageURL,
@@ -31,6 +34,12 @@ class Tile {
       );
     }
 
+    final String widgetKey = _generateWidgetKey();
+    
+    if (_widgetCache.containsKey(widgetKey)) {
+      return _widgetCache[widgetKey]!;
+    }
+    
     Widget imageWidget;
     if (imageBytes != null) {
       imageWidget = Image.memory(
@@ -38,22 +47,7 @@ class Tile {
         fit: BoxFit.cover,
       );
     } else if (imageFile != null) {
-      imageWidget = FutureBuilder<ui.Image>(
-        future: _getOptimizedSquareImage(imageFile!),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && 
-              snapshot.hasData) {
-            return RawImage(
-              image: snapshot.data,
-              fit: BoxFit.cover,
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      );
+      return _buildFileImageTile(widgetKey);
     } else {
       imageWidget = Image.network(
         imageURL!,
@@ -75,7 +69,7 @@ class Tile {
       );
     }
 
-    return Stack(
+    Widget finalWidget = Stack(
       children: [
         FittedBox(
           fit: BoxFit.cover,
@@ -110,6 +104,96 @@ class Tile {
           ),
       ],
     );
+    
+    if (imageFile == null) {
+      _widgetCache[widgetKey] = finalWidget;
+    }
+    
+    return finalWidget;
+  }
+  
+  Widget _buildFileImageTile(String widgetKey) {
+    final String cacheKey = imageFile!.path;
+    
+    if (_widgetCache.containsKey(widgetKey)) {
+      return _widgetCache[widgetKey]!;
+    }
+    
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        if (_imageCache.containsKey(cacheKey)) {
+          final Widget cachedWidget = _buildCompleteWidget(_imageCache[cacheKey]!);
+          _widgetCache[widgetKey] = cachedWidget;
+          return cachedWidget;
+        } else {
+          _loadAndCacheImage(cacheKey, setState);
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      }
+    );
+  }
+  
+  void _loadAndCacheImage(String cacheKey, StateSetter setState) async {
+    if (!_imageCache.containsKey(cacheKey)) {
+      final optimizedImage = await _getOptimizedSquareImage(imageFile!);
+      _imageCache[cacheKey] = optimizedImage;
+      setState(() {});
+    }
+  }
+  
+  Widget _buildCompleteWidget(ui.Image image) {
+    return Stack(
+      children: [
+        FittedBox(
+          fit: BoxFit.cover,
+          child: ClipRect(
+            child: Align(
+              alignment: alignment,
+              widthFactor: 1/gridSize,   
+              heightFactor: 1/gridSize, 
+              child: RawImage(
+                image: image,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        if (showNumber)
+          Center(
+            child: Container(
+              child: Text(
+                '$number',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  shadows: const [
+                    Shadow(
+                      blurRadius: 3.0,
+                      color: Colors.black,
+                      offset: Offset(1.0, 1.0),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+  
+  String _generateWidgetKey() {
+    String baseKey = '';
+    if (imageFile != null) {
+      baseKey = 'file_${imageFile!.path}';
+    } else if (imageBytes != null) {
+      baseKey = 'bytes_${imageBytes.hashCode}';
+    } else if (imageURL != null) {
+      baseKey = 'url_$imageURL';
+    }
+    return '${baseKey}_${alignment.x}_${alignment.y}_${gridSize}_${number}_${showNumber}';
   }
   
   Future<ui.Image> _getOptimizedSquareImage(File imageFile) async {
