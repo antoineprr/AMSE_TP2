@@ -43,60 +43,6 @@ class MyHomePage extends StatelessWidget {
           ),
           centerTitle: true,
           backgroundColor: Colors.indigo,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white),
-              onPressed: () async {
-                final action = await showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Paramètres'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.delete_forever),
-                            title: const Text('Réinitialiser les scores'),
-                            onTap: () async {
-                              await GameManager.clearAllGames();
-                              if (context.mounted) {
-                                Navigator.of(context).pop('reset');
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        TextButton(
-                          child: const Text('Annuler'),
-                          onPressed: () {
-                            Navigator.of(context).pop('cancel');
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-                
-                if (action == 'reset' && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Les scores ont été réinitialisés'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  
-                  if (DefaultTabController.of(context).index == 1) {
-                    DefaultTabController.of(context).animateTo(0);
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      DefaultTabController.of(context).animateTo(1);
-                    });
-                  }
-                }
-              },
-            ),
-          ],
         ),
         body: const TabBarView(
           children: [
