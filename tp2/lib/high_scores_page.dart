@@ -20,12 +20,13 @@ class _HighScoresPageState extends State<HighScoresPage> {
         children: [
           Card(
             margin: const EdgeInsets.all(8.0),
+            color: Colors.indigo[100],
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Filtres et tri:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Filtres et tri :', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -149,7 +150,13 @@ class _HighScoresPageState extends State<HighScoresPage> {
                       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: ListTile(
                         title: Text('Grille: ${game['gridSize']}, Difficulté: ${game['difficulty']}'),
-                        subtitle: Text('Temps: $formattedTime, Coups: ${game['moves']}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Temps: $formattedTime, Coups: ${game['moves']}'),
+                            Text(game['showNumbers'] ? 'Avec numéros' : 'Sans numéros'),
+                          ],
+                        ),
                       ),
                     );
                   },

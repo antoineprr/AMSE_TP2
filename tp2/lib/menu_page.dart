@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:tp2/taquin_page.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -17,6 +19,7 @@ class _MenuPageState extends State<MenuPage> {
   bool _showNumbers = true;
   int _difficulty = 2;
   File? _selectedImage;
+  Uint8List? _webImage;
   final ImagePicker _picker = ImagePicker();
 
   void _changeImage() {
@@ -24,6 +27,7 @@ class _MenuPageState extends State<MenuPage> {
     _imageUrlController.text = 'https://picsum.photos/512/512?random=$random';
     setState(() {
       _selectedImage = null;
+      _webImage = null;
     });
   }
 
@@ -31,11 +35,20 @@ class _MenuPageState extends State<MenuPage> {
     try {
       final XFile? pickedImage = await _picker.pickImage(source: source);
       if (pickedImage != null) {
-        setState(() {
-          //_selectedImage = File(pickedImage.path);
-          _selectedImage = null;
-          _imageUrlController.text = '${pickedImage.path}';
-        });
+        if (kIsWeb) {
+          // Sur le web, on lit l'image en tant que bytes
+          final imageBytes = await pickedImage.readAsBytes();
+          setState(() {
+            _webImage = imageBytes;
+            _selectedImage = null;  // Pas besoin sur le web
+          });
+        } else {
+          // Sur mobile, on utilise File
+          setState(() {
+            _selectedImage = File(pickedImage.path);
+            _webImage = null;  // Pas besoin sur mobile
+          });
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -64,6 +77,73 @@ class _MenuPageState extends State<MenuPage> {
     setState(() {
       _showNumbers = !_showNumbers;
     });
+  }
+
+  Widget _buildImageWidget() {
+    if (_webImage != null) {
+      return Image.memory(
+        _webImage!,
+        height: 200,
+        width: 200,
+        fit: BoxFit.cover,
+      );
+    } else if (_selectedImage != null && !kIsWeb) {
+      return Image.file(
+        _selectedImage!,
+        height: 200,
+        width: 200,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(
+        _imageUrlController.text,
+        height: 200,
+        width: 200,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            height: 200,
+            width: 200,
+            color: Colors.grey.shade300,
+            child: const Center(
+              child: Text('Impossible de charger l\'image'),
+            ),
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            height: 200,
+            width: 200,
+            color: Colors.grey.shade200,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded / 
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  void _startGame() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaquinBoard(
+          imageUrl: (_selectedImage == null && _webImage == null) ? _imageUrlController.text : null,
+          imageFile: _selectedImage,
+          imageBytes: _webImage, 
+          gridSize: _gridSize,
+          showNumbers: _showNumbers,
+          difficulty: _difficulty,
+        ),
+      ),
+    );
   }
 
   @override
@@ -124,45 +204,7 @@ class _MenuPageState extends State<MenuPage> {
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: _selectedImage != null
-                            ? Image.file(
-                                _selectedImage!,
-                                height: 200,
-                                width: 200,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.network(
-                                _imageUrlController.text,
-                                height: 200,
-                                width: 200,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    height: 200,
-                                    width: 200,
-                                    color: Colors.grey.shade300,
-                                    child: const Center(
-                                      child: Text('Impossible de charger l\'image'),
-                                    ),
-                                  );
-                                },
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Container(
-                                    height: 200,
-                                    width: 200,
-                                    color: Colors.grey.shade200,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded / 
-                                                loadingProgress.expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                        child: _buildImageWidget(),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -307,29 +349,7 @@ class _MenuPageState extends State<MenuPage> {
             const SizedBox(height: 30),
             
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<Widget>(
-                    builder: (BuildContext context) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          automaticallyImplyLeading: false,
-                          title: const Text('Taquin'),
-                          backgroundColor: Colors.indigo,
-                        ),
-                        body: TaquinBoard(
-                          imageUrl: _selectedImage != null ? null : _imageUrlController.text,
-                          imageFile: _selectedImage,
-                          gridSize: _gridSize,
-                          showNumbers: _showNumbers,
-                          difficulty: _difficulty,
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
+              onPressed: _startGame,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,

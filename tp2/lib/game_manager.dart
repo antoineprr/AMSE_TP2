@@ -4,7 +4,7 @@ import 'dart:convert';
 class GameManager {
   static const String _keyBestGames = 'best_games';
 
-  static Future<void> addGame(String gridSize, String difficulty, int time, int moves) async {
+  static Future<void> addGame(String gridSize, String difficulty, int time, int moves, bool showNumbers) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       List<String> bestGames = prefs.getStringList(_keyBestGames) ?? [];
@@ -14,6 +14,7 @@ class GameManager {
         'difficulty': difficulty,
         'time': time,
         'moves': moves,
+        'showNumbers': showNumbers,  
         'date': DateTime.now().toIso8601String(),
       };
 

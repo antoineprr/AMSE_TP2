@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -10,6 +11,7 @@ import 'package:tp2/tile.dart';
 class TaquinBoard extends StatefulWidget {
   final String? imageUrl;
   final File? imageFile;
+  final Uint8List? imageBytes;  
   final int gridSize;
   final bool showNumbers;
   final int difficulty;
@@ -20,6 +22,7 @@ class TaquinBoard extends StatefulWidget {
     super.key,
     this.imageUrl,
     this.imageFile,
+    this.imageBytes,
     required this.gridSize,
     required this.showNumbers,
     required this.difficulty,
@@ -73,8 +76,9 @@ class _TaquinBoardState extends State<TaquinBoard> {
       return List.generate(size, (col) {
         int tileNumber = row * size + col + 1; 
         return Tile(
-          imageURL: widget.imageFile == null ? imageUrl : null,
+          imageURL: (widget.imageFile == null && widget.imageBytes == null) ? imageUrl : null,
           imageFile: widget.imageFile,
+          imageBytes: widget.imageBytes,
           alignment: Alignment((col * 2 / (size - 1))-1, (row * 2 / (size - 1))-1),
           gridSize: size,
           isEmpty: false,
@@ -240,14 +244,13 @@ class _TaquinBoardState extends State<TaquinBoard> {
       tileMatrix[row2][col2] = temp;
     });
 
-    _audioPlayer.seek(Duration.zero);
-    _audioPlayer.play();
-
     if (isFinished()){
       timer.cancel();
       chrono.stop();
       
-      // Enregistrer le score dans GameManager
+    _audioPlayer.seek(Duration.zero);
+    _audioPlayer.play();
+      
       final int timeInSeconds = chrono.elapsedMilliseconds ~/ 1000;
       String gridSizeStr = "${_sliderValue.round()}x${_sliderValue.round()}";
       String difficultyStr;
@@ -265,8 +268,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
           difficultyStr = "Moyen";
       }
       
-      // Appel asynchrone pour enregistrer le score
-      GameManager.addGame(gridSizeStr, difficultyStr, timeInSeconds, moveCount)
+      GameManager.addGame(gridSizeStr, difficultyStr, timeInSeconds, moveCount, showNumbers)
           .then((_) {
         print('Score enregistré avec succès');
       }).catchError((error) {
@@ -393,34 +395,39 @@ class _TaquinBoardState extends State<TaquinBoard> {
     });
   }
   
-  Widget _buildImage() {
-    if (widget.imageFile != null) {
-      return Image.file(
-        widget.imageFile!,
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            color: Colors.grey.shade300,
-            child: const Center(
-              child: Text('Erreur de chargement de l\'image'),
-            ),
-          );
-        },
-      );
-    }
+ Widget _buildImage() {
+  if (widget.imageBytes != null) {
+    return Image.memory(
+      widget.imageBytes!,
+      fit: BoxFit.cover,
+    );
+  } else if (widget.imageFile != null) {
+    return Image.file(
+      widget.imageFile!,
+      fit: BoxFit.cover,
+    );
+  } else {
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Colors.grey.shade300,
+          child: const Center(
+            child: Text('Erreur de chargement de l\'image'),
+          ),
+        );
+      },
+    );
   }
-  
+}
+
   void _showFullImage(BuildContext context) {
     showDialog(
       context: context,

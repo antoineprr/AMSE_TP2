@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class Tile {
   final String? imageURL;
   final File? imageFile;
+  final Uint8List? imageBytes; 
   final Alignment alignment;
   final int gridSize;
   bool isEmpty;
@@ -14,6 +16,7 @@ class Tile {
   Tile({
     this.imageURL,
     this.imageFile,
+    this.imageBytes,
     required this.alignment,
     required this.gridSize,
     required this.isEmpty,
@@ -29,7 +32,12 @@ class Tile {
     }
 
     Widget imageWidget;
-    if (imageFile != null) {
+    if (imageBytes != null) {
+      imageWidget = Image.memory(
+        imageBytes!,
+        fit: BoxFit.cover,
+      );
+    } else if (imageFile != null) {
       imageWidget = FutureBuilder<ui.Image>(
         future: _getOptimizedSquareImage(imageFile!),
         builder: (context, snapshot) {
@@ -40,7 +48,7 @@ class Tile {
               fit: BoxFit.cover,
             );
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
