@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tp2/menu_page.dart';
 import 'package:tp2/high_scores_page.dart';
-import 'package:tp2/game_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

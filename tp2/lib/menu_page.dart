@@ -370,7 +370,7 @@ class _MenuPageState extends State<MenuPage> {
                       SizedBox(height: 8),
                       Text('• Le but est de reconstituer l\'image complète le plus rapidement possible.'),
                       SizedBox(height: 8),
-                      Text('• Plus la grille est grande, plus le défi est important !'),
+                      Text("• Plus la grille est grande, plus c'est difficile."),
                     ],
                   ),
                 ),
