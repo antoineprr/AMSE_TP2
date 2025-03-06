@@ -60,7 +60,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
 
   Future<void> _initAudio() async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setAsset('assets/audio/move.wav');
+    await _audioPlayer.setAsset('assets/audio/victory.mp3');
     await _audioPlayer.setVolume(1.0);
   }
 
