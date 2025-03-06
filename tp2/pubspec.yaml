@@ -1,5 +1,5 @@
 name: tp2
-description: "A new Flutter project."
+description: "Tac'1 - Jeu de taquin"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -13,6 +13,7 @@ dependencies:
   image_picker: ^1.1.2
   just_audio: ^0.9.46
   shared_preferences: ^2.5.2
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +24,18 @@ flutter:
   uses-material-design: true
   assets:
     - assets/audio/
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  web:
+    generate: true
+    image_path: "assets/images/logo.png"
+  windows:
+    generate: true
+    image_path: "assets/images/logo.png"
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.png"
+  min_sdk_android: 21

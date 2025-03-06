@@ -60,13 +60,23 @@ class _TaquinBoardState extends State<TaquinBoard> {
 
   Future<void> _initAudio() async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setAsset('assets/audio/victory.mp3');
-    await _audioPlayer.setVolume(1.0);
+    try {
+            await _audioPlayer.setAsset('assets/audio/victory.mp3');
+      await _audioPlayer.setVolume(1.0);
+      await _audioPlayer.load();
+      print('Audio player initialized successfully');
+    } catch (e) {
+      print('Error initializing audio player: $e');
+    }
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    try {
+      _audioPlayer.dispose();
+    } catch (e) {
+      print('Error disposing audio player: $e');
+    }
     timer.cancel();
     chrono.stop();
     super.dispose();
@@ -314,7 +324,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
     );
   }
 
-  void swapTiles(int row1, int col1, int row2, int col2) {
+  void swapTiles(int row1, int col1, int row2, int col2) async {
     setState(() {
       var temp = tileMatrix[row1][col1];
       tileMatrix[row1][col1] = tileMatrix[row2][col2];
@@ -327,8 +337,14 @@ class _TaquinBoardState extends State<TaquinBoard> {
       timer.cancel();
       chrono.stop();
       
-    _audioPlayer.seek(Duration.zero);
-    _audioPlayer.play();
+      try {
+        await _audioPlayer.stop(); 
+        await _audioPlayer.seek(Duration.zero);
+        await _audioPlayer.play();
+        print('Audio played successfully');
+      } catch (e) {
+        print('Error playing victory sound: $e');
+      }
       
       final int timeInSeconds = chrono.elapsedMilliseconds ~/ 1000;
       String gridSizeStr = "${_sliderValue.round()}x${_sliderValue.round()}";
@@ -369,59 +385,66 @@ class _TaquinBoardState extends State<TaquinBoard> {
                 const Text('Félicitations !'),
               ],
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  color: Colors.blue.shade50,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.swipe, color: Colors.orange),
-                            const SizedBox(width: 8),
-                            Text('Résolu en $moveCount coups', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.timer, color: Colors.blue),
-                            const SizedBox(width: 8),
-                            (chrono.elapsedMilliseconds/1000 < 60)
-                              ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
-                              : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
-                          ],
-                        ),
-                      ],
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    color: Colors.blue.shade50,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.swipe, color: Colors.orange),
+                              const SizedBox(width: 8),
+                              Text('Résolu en $moveCount coups', style: const TextStyle(fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.timer, color: Colors.blue),
+                              const SizedBox(width: 8),
+                              (chrono.elapsedMilliseconds/1000 < 60)
+                                ? Text('Temps : ${chrono.elapsedMilliseconds~/1000}s')
+                                : Text('Temps : ${chrono.elapsedMilliseconds~/60000} min et ${(chrono.elapsedMilliseconds%60000)~/1000} s'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const Text('Votre score a été enregistré !',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
+                  const Text('Votre score a été enregistré !',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: _buildImage(),
+                  const SizedBox(height: 16),
+                  ConstrainedBox( 
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.25,
+                      maxWidth: MediaQuery.of(context).size.width * 0.6,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: _buildImage(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             actions: <Widget>[
-              Center(
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.home),
