@@ -60,23 +60,13 @@ class _TaquinBoardState extends State<TaquinBoard> {
 
   Future<void> _initAudio() async {
     _audioPlayer = AudioPlayer();
-    try {
-            await _audioPlayer.setAsset('assets/audio/victory.mp3');
-      await _audioPlayer.setVolume(1.0);
-      await _audioPlayer.load();
-      print('Audio player initialized successfully');
-    } catch (e) {
-      print('Error initializing audio player: $e');
-    }
+    await _audioPlayer.setAsset('assets/audio/victory.mp3');
+    await _audioPlayer.setVolume(1.0);
   }
 
   @override
   void dispose() {
-    try {
-      _audioPlayer.dispose();
-    } catch (e) {
-      print('Error disposing audio player: $e');
-    }
+    _audioPlayer.dispose();
     timer.cancel();
     chrono.stop();
     super.dispose();
@@ -324,7 +314,7 @@ class _TaquinBoardState extends State<TaquinBoard> {
     );
   }
 
-  void swapTiles(int row1, int col1, int row2, int col2) async {
+  void swapTiles(int row1, int col1, int row2, int col2) {
     setState(() {
       var temp = tileMatrix[row1][col1];
       tileMatrix[row1][col1] = tileMatrix[row2][col2];
@@ -337,14 +327,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
       timer.cancel();
       chrono.stop();
       
-      try {
-        await _audioPlayer.stop(); 
-        await _audioPlayer.seek(Duration.zero);
-        await _audioPlayer.play();
-        print('Audio played successfully');
-      } catch (e) {
-        print('Error playing victory sound: $e');
-      }
+    _audioPlayer.seek(Duration.zero);
+    _audioPlayer.play();
       
       final int timeInSeconds = chrono.elapsedMilliseconds ~/ 1000;
       String gridSizeStr = "${_sliderValue.round()}x${_sliderValue.round()}";
@@ -475,6 +459,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
                           tileMatrix = createTileMatrix(_sliderValue.round());
                           moveCount = 0;
                           chrono.reset();
+                          chrono.start();
+                          _resetAudio();
                         });
                         Navigator.of(context).pop();
                       },
@@ -496,6 +482,8 @@ class _TaquinBoardState extends State<TaquinBoard> {
                           tileMatrix = createTileMatrix(_sliderValue.round());
                           moveCount = 0;
                           chrono.reset();
+                          chrono.start();
+                          _resetAudio();
                         });
                         Navigator.of(context).pop();
                       },
@@ -542,39 +530,46 @@ class _TaquinBoardState extends State<TaquinBoard> {
       setState(() {});
     });
   }
-  
- Widget _buildImage() {
-  if (widget.imageBytes != null) {
-    return Image.memory(
-      widget.imageBytes!,
-      fit: BoxFit.cover,
-    );
-  } else if (widget.imageFile != null) {
-    return Image.file(
-      widget.imageFile!,
-      fit: BoxFit.cover,
-    );
-  } else {
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: Colors.grey.shade300,
-          child: const Center(
-            child: Text('Erreur de chargement de l\'image'),
-          ),
-        );
-      },
-    );
+
+  Future<void> _resetAudio() async {
+    await _audioPlayer.stop();
+    await _audioPlayer.seek(Duration.zero);
+    await _audioPlayer.setAsset('assets/audio/victory.mp3');
+    await _audioPlayer.setVolume(1.0);
   }
-}
+  
+  Widget _buildImage() {
+    if (widget.imageBytes != null) {
+      return Image.memory(
+        widget.imageBytes!,
+        fit: BoxFit.cover,
+      );
+    } else if (widget.imageFile != null) {
+      return Image.file(
+        widget.imageFile!,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.grey.shade300,
+            child: const Center(
+              child: Text('Erreur de chargement de l\'image'),
+            ),
+          );
+        },
+      );
+    }
+  }
 
   void _showFullImage(BuildContext context) {
     showDialog(
